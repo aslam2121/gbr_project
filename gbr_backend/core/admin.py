@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Member, Continent, Country, Industry, Company
+from .models import Member, Continent, Country, Industry, Company, PageVisit
 from datetime import timedelta
 from django.utils import timezone
 
@@ -36,3 +36,4 @@ admin.site.register(Continent)
 admin.site.register(Country)
 admin.site.register(Industry)
 admin.site.register(Company)
+admin.site.register(PageVisit)

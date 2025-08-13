@@ -3,6 +3,9 @@ from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from .forms import SignUpForm
 from .models import Continent, Country, Industry, Company
+from django.db.models import Count
+from django.utils import timezone
+from core.models import PageVisit
 
 # Create your views here.
 def home(request):
@@ -57,3 +60,16 @@ def list_companies(request, industry_id):
 def company_detail(request, company_id):
     company = get_object_or_404(Company, id=company_id)
     return render(request, 'listings/company_detail.html', {'company': company})
+
+def analytics_dashboard(request):
+    total_hits = PageVisit.objects.count()
+    today = timezone.now().date()
+    daily_hits = PageVisit.objects.filter(timestamp__date=today).count()
+    weekly_hits = PageVisit.objects.filter(timestamp__date__gte=today - timezone.timedelta(days=7)).count()
+    monthly_hits = PageVisit.objects.filter(timestamp__date__gte=today - timezone.timedelta(days=30)).count()
+    return render(request, 'analytics/dashboard.html', {
+        'total_hits': total_hits,
+        'daily_hits': daily_hits,
+        'weekly_hits': weekly_hits,
+        'monthly_hits': monthly_hits,
+    })

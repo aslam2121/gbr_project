@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Site Analytics Dashboard</h2>
+<div class="row">
+    <div class="col-md-3">
+        <div class="card text-center mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Total Hits</h5>
+                <p class="display-6">{{ total_hits }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Today</h5>
+                <p class="display-6">{{ daily_hits }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Last 7 Days</h5>
+                <p class="display-6">{{ weekly_hits }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Last 30 Days</h5>
+                <p class="display-6">{{ monthly_hits }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -42,3 +42,9 @@ class Company(models.Model):
     chat_code = models.CharField(max_length=255, blank=True)
     def __str__(self):
         return self.name
+
+class PageVisit(models.Model):
+    path = models.CharField(max_length=255)
+    timestamp = models.DateTimeField(auto_now_add=True)
+    def __str__(self):
+        return f"{self.path} at {self.timestamp}"
