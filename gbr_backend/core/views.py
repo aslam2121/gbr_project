@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login
+from django.contrib.auth.decorators import login_required
 from .forms import SignUpForm
 
 # Create your views here.
@@ -28,3 +29,7 @@ def register(request):
     else:
         form = SignUpForm()
     return render(request, 'registration/register.html', {'form': form})
+
+@login_required
+def member_dashboard(request):
+    return render(request, 'member_dashboard.html')

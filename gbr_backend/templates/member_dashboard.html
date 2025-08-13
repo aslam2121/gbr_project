@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 text-center">
+        <h2>Welcome, {{ user.username }}!</h2>
+        <p>This is your member dashboard. Only logged-in members can see this page.</p>
+    </div>
+</div>
+{% endblock %}
