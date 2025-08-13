@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Companies in {{ industry.name }}</h2>
+<div class="row">
+    {% for company in companies %}
+        <div class="col-md-4 mb-3">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">{{ company.name }}</h5>
+                    <p class="card-text">{{ company.description|truncatewords:20 }}</p>
+                    <a href="{% url 'company_detail' company.id %}" class="btn btn-primary">View Details</a>
+                </div>
+            </div>
+        </div>
+    {% empty %}
+        <div class="col-12">
+            <div class="alert alert-info">No companies available.</div>
+        </div>
+    {% endfor %}
+</div>
+<a href="{% url 'list_industries' industry.country.id %}" class="btn btn-secondary mt-3">Back to Industries</a>
+{% endblock %}

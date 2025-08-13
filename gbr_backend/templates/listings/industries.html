@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Industries in {{ country.name }}</h2>
+<ul class="list-group">
+    {% for industry in industries %}
+        <li class="list-group-item">
+            <a href="{% url 'list_companies' industry.id %}">{{ industry.name }}</a>
+        </li>
+    {% empty %}
+        <li class="list-group-item">No industries available.</li>
+    {% endfor %}
+</ul>
+<a href="{% url 'list_countries' country.continent.id %}" class="btn btn-secondary mt-3">Back to Countries</a>
+{% endblock %}

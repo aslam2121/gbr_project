@@ -12,4 +12,8 @@ urlpatterns = [
     path('logout/', LogoutView.as_view(), name='logout'),
     path('register/', views.register, name='register'),
     path('dashboard/', views.member_dashboard, name='dashboard'),
+    path('listings/', views.list_continents, name='list_continents'),
+    path('listings/continent/<int:continent_id>/', views.list_countries, name='list_countries'),
+    path('listings/country/<int:country_id>/', views.list_industries, name='list_industries'),
+    path('listings/industry/<int:industry_id>/', views.list_companies, name='list_companies'),
 ]

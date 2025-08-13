@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Continents</h2>
+<ul class="list-group">
+    {% for continent in continents %}
+        <li class="list-group-item">
+            <a href="{% url 'list_countries' continent.id %}">{{ continent.name }}</a>
+        </li>
+    {% empty %}
+        <li class="list-group-item">No continents available.</li>
+    {% endfor %}
+</ul>
+{% endblock %}
