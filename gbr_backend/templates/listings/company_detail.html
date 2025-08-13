@@ -16,7 +16,9 @@
                 <div class="mt-2">{{ company.chat_code|safe }}</div>
             {% endif %}
         </div>
-        <a href="{% url 'list_companies' company.industry.id %}" class="btn btn-secondary">Back to Companies</a>
+        <a href="{% url 'chat' company.id %}" class="btn btn-primary">Start Chat</a>
+        <a href="{% url 'video_chat' company.id %}" class="btn btn-outline-primary ms-2">Start Video Call</a>
+        <a href="{% url 'list_companies' company.industry.id %}" class="btn btn-secondary ms-2">Back to Companies</a>
     </div>
 </div>
 {% endblock %}

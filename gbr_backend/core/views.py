@@ -73,3 +73,7 @@ def analytics_dashboard(request):
         'weekly_hits': weekly_hits,
         'monthly_hits': monthly_hits,
     })
+
+def chat(request, company_id):
+    company = get_object_or_404(Company, id=company_id)
+    return render(request, 'chat.html', {'company': company})

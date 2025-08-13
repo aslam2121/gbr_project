@@ -17,5 +17,6 @@ urlpatterns = [
     path('listings/country/<int:country_id>/', views.list_industries, name='list_industries'),
     path('listings/industry/<int:industry_id>/', views.list_companies, name='list_companies'),
     path('listings/company/<int:company_id>/', views.company_detail, name='company_detail'),
+    path('listings/company/<int:company_id>/chat/', views.chat, name='chat'),
     path('analytics/', views.analytics_dashboard, name='analytics_dashboard'),
 ]
