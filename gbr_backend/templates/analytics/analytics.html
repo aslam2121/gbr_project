@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container py-5">
+  <h2 class="mb-4">Site Analytics</h2>
+  <div class="card p-4">
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>Metric</th>
+          <th>Count</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Total Visits</td><td>{{ total_visits }}</td></tr>
+        <tr><td>Daily Visits</td><td>{{ daily_visits }}</td></tr>
+        <tr><td>Weekly Visits</td><td>{{ weekly_visits }}</td></tr>
+        <tr><td>Monthly Visits</td><td>{{ monthly_visits }}</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
