@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container py-5">
+  <div class="alert alert-success text-center">
+    <h4 class="alert-heading">Payment Successful!</h4>
+    <p>Your membership payment was processed successfully. Your membership expiry date has been extended.</p>
+    <a href="{% url 'dashboard' %}" class="btn btn-success">Go to Dashboard</a>
+  </div>
+</div>
+{% endblock %}

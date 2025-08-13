@@ -89,18 +89,14 @@ def video_chat(request, company_id):
 
 def payment(request):
     if request.method == 'POST':
-        amount = request.POST.get('amount')
-        method = request.POST.get('method')
         member = request.user if request.user.is_authenticated else None
         if member:
             member.payment_status = 'paid'
-            member.payment_date = timezone.now()
-            member.payment_amount = amount
-            member.payment_method = method
-            member.transaction_id = 'TEST-' + timezone.now().strftime('%Y%m%d%H%M%S')
+            member.last_payment_date = timezone.now()
+            member.next_due_date = timezone.now().date() + timezone.timedelta(days=365)
+            member.expiry_date = member.next_due_date
             member.save()
-            messages.success(request, 'Payment successful! Membership marked as paid.')
-            return redirect('member_dashboard')
+            return render(request, 'payment_success.html')
         else:
-            messages.error(request, 'You must be logged in to make a payment.')
+            return render(request, 'payment_failed.html')
     return render(request, 'payment.html')
