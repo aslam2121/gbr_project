@@ -20,4 +20,5 @@ urlpatterns = [
     path('listings/company/<int:company_id>/chat/', views.chat, name='chat'),
     path('listings/company/<int:company_id>/video/', views.video_chat, name='video_chat'),
     path('analytics/', views.analytics_dashboard, name='analytics_dashboard'),
+    path('payment/', views.payment, name='payment'),
 ]

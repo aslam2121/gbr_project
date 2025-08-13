@@ -2,10 +2,11 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from .forms import SignUpForm
-from .models import Continent, Country, Industry, Company
+from .models import Continent, Country, Industry, Company, Member
 from django.db.models import Count
 from django.utils import timezone
 from core.models import PageVisit
+from django.contrib import messages
 
 # Create your views here.
 def home(request):
@@ -81,3 +82,21 @@ def chat(request, company_id):
 def video_chat(request, company_id):
     company = get_object_or_404(Company, id=company_id)
     return render(request, 'video_chat.html', {'company': company})
+
+def payment(request):
+    if request.method == 'POST':
+        amount = request.POST.get('amount')
+        method = request.POST.get('method')
+        member = request.user if request.user.is_authenticated else None
+        if member:
+            member.payment_status = 'paid'
+            member.payment_date = timezone.now()
+            member.payment_amount = amount
+            member.payment_method = method
+            member.transaction_id = 'TEST-' + timezone.now().strftime('%Y%m%d%H%M%S')
+            member.save()
+            messages.success(request, 'Payment successful! Membership marked as paid.')
+            return redirect('member_dashboard')
+        else:
+            messages.error(request, 'You must be logged in to make a payment.')
+    return render(request, 'payment.html')

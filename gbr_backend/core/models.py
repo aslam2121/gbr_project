@@ -13,6 +13,11 @@ class Member(AbstractUser):
     is_active = models.BooleanField(default=True)
     groups = models.ManyToManyField(Group, related_name='member_groups', blank=True)
     user_permissions = models.ManyToManyField(Permission, related_name='member_permissions', blank=True)
+    payment_status = models.CharField(max_length=20, default='unpaid')
+    payment_date = models.DateTimeField(null=True, blank=True)
+    payment_amount = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
+    payment_method = models.CharField(max_length=20, null=True, blank=True)
+    transaction_id = models.CharField(max_length=100, null=True, blank=True)
 
     def __str__(self):
         return self.username
