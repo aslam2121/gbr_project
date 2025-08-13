@@ -1,14 +1,18 @@
 from django.db import models
+from django.contrib.auth.models import AbstractUser, Group, Permission
+from django.utils import timezone
 
-# Create your models here.
-class Member(models.Model):
+class Member(AbstractUser):
     username = models.CharField(max_length=150, unique=True)
     email = models.EmailField(unique=True)
     password = models.CharField(max_length=128)
     category = models.CharField(max_length=50)
     period = models.CharField(max_length=50)
-    join_date = models.DateField(auto_now_add=True)
-    expiry_date = models.DateField()
+    join_date = models.DateField(default=timezone.now)
+    expiry_date = models.DateField(null=True, blank=True)
+    is_active = models.BooleanField(default=True)
+    groups = models.ManyToManyField(Group, related_name='member_groups', blank=True)
+    user_permissions = models.ManyToManyField(Permission, related_name='member_permissions', blank=True)
 
     def __str__(self):
         return self.username
