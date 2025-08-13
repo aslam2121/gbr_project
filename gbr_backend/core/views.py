@@ -53,3 +53,7 @@ def list_companies(request, industry_id):
     industry = get_object_or_404(Industry, id=industry_id)
     companies = industry.companies.all()
     return render(request, 'listings/companies.html', {'industry': industry, 'companies': companies})
+
+def company_detail(request, company_id):
+    company = get_object_or_404(Company, id=company_id)
+    return render(request, 'listings/company_detail.html', {'company': company})

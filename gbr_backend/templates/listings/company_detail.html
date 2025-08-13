@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="card mb-4">
+    <div class="card-header">
+        <h2>{{ company.name }}</h2>
+    </div>
+    <div class="card-body">
+        <h5 class="card-title">Description</h5>
+        <p class="card-text">{{ company.description }}</p>
+        <h5 class="card-title">Contact Info</h5>
+        <p class="card-text">{{ company.contact_info }}</p>
+        <h5 class="card-title">Chat/Video</h5>
+        <div class="mb-3">
+            <span class="badge bg-secondary">Chat/Video Placeholder</span>
+            {% if company.chat_code %}
+                <div class="mt-2">{{ company.chat_code|safe }}</div>
+            {% endif %}
+        </div>
+        <a href="{% url 'list_companies' company.industry.id %}" class="btn btn-secondary">Back to Companies</a>
+    </div>
+</div>
+{% endblock %}
