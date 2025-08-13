@@ -1,5 +1,10 @@
 {% extends 'base.html' %}
 {% block content %}
+{% if user.is_authenticated and user.expiry_date and user.expiry_date < today %}
+<div class="alert alert-danger text-center" role="alert">
+    <strong>Expired Membership:</strong> Your membership has expired. Please renew to regain access.
+</div>
+{% endif %}
 <div class="row justify-content-center">
     <div class="col-md-8 text-center">
         <h2>Welcome, {{ user.username }}!</h2>

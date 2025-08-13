@@ -5,7 +5,6 @@ from django.utils import timezone
 class Member(AbstractUser):
     username = models.CharField(max_length=150, unique=True)
     email = models.EmailField(unique=True)
-    password = models.CharField(max_length=128)
     category = models.CharField(max_length=50)
     period = models.CharField(max_length=50)
     join_date = models.DateField(default=timezone.now)
@@ -21,6 +20,10 @@ class Member(AbstractUser):
 
     def __str__(self):
         return self.username
+
+    class Meta:
+        verbose_name = "Member"
+        verbose_name_plural = "Members"
 
 class Continent(models.Model):
     name = models.CharField(max_length=100)

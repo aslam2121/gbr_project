@@ -19,25 +19,25 @@ Mark each box `[x]` when the feature works as expected.
 ### Authentication
 - [✅] Register page creates a new user
 - [✅] New user is logged in automatically after registration
-- [ ] Login page works with correct credentials
-- [ ] Login fails with incorrect credentials
-- [ ] Logout works and redirects to home
-- [ ] Navbar updates based on login status
-- [ ] Member-only page redirects to login if user is not authenticated
+- [✅] Login page works with correct credentials
+- [✅] Login fails with incorrect credentials
+- [✅] Logout works and redirects to home
+- [✅] Navbar updates based on login status
+- [✅] Member-only page redirects to login if user is not authenticated
 
 ### Admin Access
-- [ ] Can log in to `/admin/` with superuser credentials
-- [ ] Can view and edit User objects
+- [✅] Can log in to `/admin/` with superuser credentials
+- [✅] Can view and edit User objects
 
 ---
 
 ## ⏳ Steps 17–19 (Listings)
-- [ ] Can create continents, countries, industries, and companies in admin
-- [ ] Continent list page shows all continents
-- [ ] Clicking a continent shows its countries
-- [ ] Clicking a country shows its industries
-- [ ] Clicking an industry shows its companies
-- [ ] Clicking a company shows its details page
+- [✅] Can create continents, countries, industries, and companies in admin
+- [✅] Continent list page shows all continents
+- [✅] Clicking a continent shows its countries
+- [✅] Clicking a country shows its industries
+- [✅] Clicking an industry shows its companies
+- [✅] Clicking a company shows its details page
 
 ---
 

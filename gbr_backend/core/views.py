@@ -37,7 +37,8 @@ def register(request):
 
 @login_required
 def member_dashboard(request):
-    return render(request, 'member_dashboard.html')
+    today = timezone.now().date()
+    return render(request, 'member_dashboard.html', {'today': today})
 
 def list_continents(request):
     continents = Continent.objects.all()
