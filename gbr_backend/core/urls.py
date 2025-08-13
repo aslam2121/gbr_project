@@ -8,7 +8,7 @@ urlpatterns = [
     path('contact/', views.contact, name='contact'),
     path('policies/', views.policies, name='policies'),
     path('faq/', views.faq, name='faq'),
-    path('login/', LoginView.as_view(template_name='registration/login.html'), name='login'),
+    path('login/', LoginView.as_view(template_name='registration/login.html', redirect_authenticated_user=True, next_page='dashboard'), name='login'),
     path('logout/', LogoutView.as_view(), name='logout'),
     path('register/', views.register, name='register'),
     path('dashboard/', views.member_dashboard, name='dashboard'),
