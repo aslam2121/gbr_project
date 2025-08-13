@@ -18,5 +18,6 @@ urlpatterns = [
     path('listings/industry/<int:industry_id>/', views.list_companies, name='list_companies'),
     path('listings/company/<int:company_id>/', views.company_detail, name='company_detail'),
     path('listings/company/<int:company_id>/chat/', views.chat, name='chat'),
+    path('listings/company/<int:company_id>/video/', views.video_chat, name='video_chat'),
     path('analytics/', views.analytics_dashboard, name='analytics_dashboard'),
 ]

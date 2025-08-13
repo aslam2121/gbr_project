@@ -77,3 +77,7 @@ def analytics_dashboard(request):
 def chat(request, company_id):
     company = get_object_or_404(Company, id=company_id)
     return render(request, 'chat.html', {'company': company})
+
+def video_chat(request, company_id):
+    company = get_object_or_404(Company, id=company_id)
+    return render(request, 'video_chat.html', {'company': company})
