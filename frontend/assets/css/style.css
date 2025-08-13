@@ -1,0 +1,9 @@
+/* Custom styles for GBR Frontend */
+body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background-color: #f8f9fa;
+}
+
+h1 {
+    color: #007bff;
+}
