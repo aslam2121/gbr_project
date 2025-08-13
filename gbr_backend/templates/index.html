@@ -1,38 +1,37 @@
-{% include 'pages/partials/header.html' %}
-<main class="container mt-5">
-    <section class="hero text-center py-5">
-        <h1 class="display-4">Welcome to GBR</h1>
-        <p class="lead">Your gateway to growth, business, and resources.</p>
-        <a href="#" class="btn btn-primary btn-lg">Get Started</a>
-    </section>
-    <section class="row mt-4">
-        <div class="col-md-4 mb-3">
-            <div class="card h-100">
-                <div class="card-body">
-                    <h5 class="card-title">About Us</h5>
-                    <p class="card-text">Learn more about GBR and our mission.</p>
-                    <a href="#" class="btn btn-outline-primary">Read More</a>
-                </div>
+{% extends 'base.html' %}
+{% block content %}
+<section class="hero text-center py-5">
+    <h1 class="display-4">Welcome to GBR</h1>
+    <p class="lead">Your gateway to growth, business, and resources.</p>
+    <a href="#" class="btn btn-primary btn-lg">Get Started</a>
+</section>
+<section class="row mt-4">
+    <div class="col-md-4 mb-3">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">About Us</h5>
+                <p class="card-text">Learn more about GBR and our mission.</p>
+                <a href="#" class="btn btn-outline-primary">Read More</a>
             </div>
         </div>
-        <div class="col-md-4 mb-3">
-            <div class="card h-100">
-                <div class="card-body">
-                    <h5 class="card-title">How GBR Works</h5>
-                    <p class="card-text">Discover how GBR connects companies, investors, and experts.</p>
-                    <a href="#" class="btn btn-outline-primary">Learn More</a>
-                </div>
+    </div>
+    <div class="col-md-4 mb-3">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">How GBR Works</h5>
+                <p class="card-text">Discover how GBR connects companies, investors, and experts.</p>
+                <a href="#" class="btn btn-outline-primary">Learn More</a>
             </div>
         </div>
-        <div class="col-md-4 mb-3">
-            <div class="card h-100">
-                <div class="card-body">
-                    <h5 class="card-title">Join GBR</h5>
-                    <p class="card-text">Become a member and unlock new opportunities.</p>
-                    <a href="#" class="btn btn-outline-primary">Sign Up</a>
-                </div>
+    </div>
+    <div class="col-md-4 mb-3">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">Join GBR</h5>
+                <p class="card-text">Become a member and unlock new opportunities.</p>
+                <a href="#" class="btn btn-outline-primary">Sign Up</a>
             </div>
         </div>
-    </section>
-</main>
-{% include 'pages/partials/footer.html' %}
+    </div>
+</section>
+{% endblock %}
