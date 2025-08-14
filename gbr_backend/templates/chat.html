@@ -16,19 +16,38 @@ const username = "{{ user.username }}";
 const chatSocket = new WebSocket(
   'ws://' + window.location.host + '/ws/chat/' + companyId + '/'
 );
-chatSocket.onmessage = function(e) {
-  const data = JSON.parse(e.data);
+
+function appendMessage(username, message, timestamp) {
   const chatWindow = document.getElementById('chat-window');
   const msgDiv = document.createElement('div');
-  msgDiv.innerHTML = `<strong>${data.username}</strong> <span class='text-muted small'>${data.timestamp}</span><br>${data.message}`;
+  msgDiv.innerHTML = `<strong>${username}</strong> <span class='text-muted small'>${timestamp}</span><br>${message}`;
   chatWindow.appendChild(msgDiv);
   chatWindow.scrollTop = chatWindow.scrollHeight;
+}
+
+chatSocket.onmessage = function(e) {
+  const data = JSON.parse(e.data);
+  appendMessage(data.username, data.message, data.timestamp);
 };
+
 document.getElementById('send-btn').onclick = function() {
   const input = document.getElementById('chat-input');
   const message = input.value;
   if (message.trim() !== '') {
     chatSocket.send(JSON.stringify({ 'message': message }));
+    // Show "Message sent!" notification
+    let statusDiv = document.getElementById('chat-status');
+    if (!statusDiv) {
+      statusDiv = document.createElement('div');
+      statusDiv.id = 'chat-status';
+      statusDiv.className = 'mt-2 text-success';
+      input.parentNode.parentNode.appendChild(statusDiv);
+    }
+    statusDiv.textContent = 'Message sent!';
+    statusDiv.style.display = 'block';
+    setTimeout(() => {
+      statusDiv.style.display = 'none';
+    }, 1000);
     input.value = '';
   }
 };

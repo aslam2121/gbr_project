@@ -137,3 +137,9 @@ LOGOUT_REDIRECT_URL = "home"
 LOGIN_URL = "login"
 
 AUTH_USER_MODEL = 'core.Member'
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer"
+    }
+}

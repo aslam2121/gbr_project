@@ -42,25 +42,25 @@ Mark each box `[x]` when the feature works as expected.
 ---
 
 ## ⏳ Steps 20–22 (Membership Management & Analytics)
-- [ ] Membership expiry logic disables expired members
-- [ ] Admin can add new members manually
-- [ ] Admin can delete members
-- [ ] Admin can edit membership dates
-- [ ] Soon-to-expire members are visible in admin filters
-- [ ] Page visits are tracked in the database
-- [ ] Admin or dashboard can display daily/weekly/monthly visit counts
+- [✅] Membership expiry logic disables expired members
+- [✅] Admin can add new members manually
+- [✅] Admin can delete members
+- [✅] Admin can edit membership dates
+- [✅] Soon-to-expire members are visible in admin filters
+- [✅] Page visits are tracked in the database
+- [✅] Admin or dashboard can display daily/weekly/monthly visit counts
 
 ---
 
 ## ⏳ Steps 23–25 (Chat, Video Chat, Payments)
 ### Chat
-- [ ] "Start Chat" button appears on company details page
-- [ ] Chat page allows sending/receiving messages (WebSocket)
+- [✅] "Start Chat" button appears on company details page
+- [✅] Chat page allows sending/receiving messages (WebSocket)
 
 ### Video Chat
-- [ ] "Start Video Call" button appears on company details page
-- [ ] Video page shows local video
-- [ ] Video page shows remote video after connection
+- [✅] "Start Video Call" button appears on company details page
+- [✅] Video page shows local video
+- [✅] Video page shows remote video after connection
 
 ### Payments
 - [ ] Payment page displays correct amount

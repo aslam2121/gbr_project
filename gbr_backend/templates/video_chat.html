@@ -15,28 +15,98 @@
   </div>
 </div>
 <script>
-// Basic WebRTC placeholder
-let localStream, remoteStream, peerConnection;
-const servers = { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] };
+const companyId = "{{ company.id }}";
+const username = "{{ user.username }}";
+const ws = new WebSocket('ws://' + window.location.host + '/ws/video/' + companyId + '/');
+let localStream, peerConnection;
+const config = { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] };
 const localVideo = document.getElementById('localVideo');
 const remoteVideo = document.getElementById('remoteVideo');
 const startCallBtn = document.getElementById('startCallBtn');
 const endCallBtn = document.getElementById('endCallBtn');
 const statusDiv = document.getElementById('status');
 
-startCallBtn.onclick = async () => {
-  statusDiv.textContent = 'Starting local video...';
-  localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-  localVideo.srcObject = localStream;
-  statusDiv.textContent = 'Local video started. (Demo only, no signaling)';
-  // In production, signaling server and peer connection setup required
+ws.onopen = function() {
+  console.log('WebSocket connection opened');
 };
-endCallBtn.onclick = () => {
-  if (localStream) {
-    localStream.getTracks().forEach(track => track.stop());
-    localVideo.srcObject = null;
-    statusDiv.textContent = 'Call ended.';
+ws.onerror = function(e) {
+  console.error('WebSocket error:', e);
+};
+ws.onclose = function() {
+  console.log('WebSocket connection closed');
+};
+
+ws.onmessage = function(e) {
+  console.log('WebSocket message received:', e.data);
+  const data = JSON.parse(e.data);
+  if (!peerConnection) {
+    console.warn('PeerConnection not initialized when message received');
+    return;
   }
+  if (data.signal.type === 'offer') {
+    console.log('Received offer');
+    peerConnection.setRemoteDescription(new RTCSessionDescription(data.signal)).then(() => {
+      console.log('Remote description set (offer)');
+      peerConnection.createAnswer().then(answer => {
+        peerConnection.setLocalDescription(answer);
+        ws.send(JSON.stringify({ signal: answer, username }));
+        console.log('Sent answer');
+      });
+    });
+  } else if (data.signal.type === 'answer') {
+    console.log('Received answer');
+    peerConnection.setRemoteDescription(new RTCSessionDescription(data.signal)).then(() => {
+      console.log('Remote description set (answer)');
+    });
+  } else if (data.signal.candidate) {
+    console.log('Received ICE candidate');
+    peerConnection.addIceCandidate(new RTCIceCandidate(data.signal.candidate)).then(() => {
+      console.log('ICE candidate added');
+    }).catch(err => {
+      console.error('Error adding ICE candidate:', err);
+    });
+  }
+};
+
+startCallBtn.onclick = async function() {
+  try {
+    console.log('Requesting local media...');
+    localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+    localVideo.srcObject = localStream;
+    console.log('Local media stream started');
+    peerConnection = new RTCPeerConnection(config);
+    peerConnection.onicecandidate = e => {
+      if (e.candidate) {
+        ws.send(JSON.stringify({ signal: { candidate: e.candidate }, username }));
+        console.log('Sent ICE candidate');
+      }
+    };
+    peerConnection.ontrack = e => {
+      console.log('Remote track received');
+      remoteVideo.srcObject = e.streams[0];
+    };
+    localStream.getTracks().forEach(track => {
+      peerConnection.addTrack(track, localStream);
+      console.log('Added local track:', track.kind);
+    });
+    peerConnection.createOffer().then(offer => {
+      peerConnection.setLocalDescription(offer);
+      ws.send(JSON.stringify({ signal: offer, username }));
+      statusDiv.textContent = "Calling...";
+      console.log('Sent offer');
+    });
+  } catch (err) {
+    console.error('Error starting call:', err);
+    statusDiv.textContent = 'Error starting call: ' + err;
+  }
+};
+
+endCallBtn.onclick = function() {
+  if (peerConnection) {
+    peerConnection.close();
+    console.log('PeerConnection closed');
+  }
+  statusDiv.textContent = "Call ended.";
 };
 </script>
 {% endblock %}
