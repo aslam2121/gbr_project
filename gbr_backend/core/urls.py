@@ -22,4 +22,9 @@ urlpatterns = [
     path('analytics/', views.analytics_dashboard, name='analytics_dashboard'),
     path('payment/', views.payment, name='payment'),
     path('admin/analytics/', views.analytics_dashboard, name='analytics_dashboard'),
+    # GrapesJS Page Builder
+    path('member-dashboard/', views.member_dashboard, name='member_dashboard'),
+    path('test-grapesjs/', views.test_grapesjs, name='test_grapesjs'),
+    path('page-builder/', views.page_builder, name='page_builder'),
+    path('save-page/', views.save_page, name='save_page'),
 ]

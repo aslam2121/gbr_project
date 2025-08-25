@@ -8,6 +8,9 @@ from core.models import PageVisit
 from django.db.models import Count
 from django.utils import timezone
 from django.contrib import messages
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+import json
 
 # Create your views here.
 def home(request):
@@ -100,3 +103,59 @@ def payment(request):
         else:
             return render(request, 'payment_failed.html')
     return render(request, 'payment.html')
+
+
+# GrapesJS Page Builder Views
+def test_grapesjs(request):
+    """Test GrapesJS without login requirement"""
+    return render(request, 'test_grapesjs.html')
+
+@login_required
+def page_builder(request):
+    """Page builder interface using GrapesJS"""
+    return render(request, 'page_builder.html')
+
+
+@csrf_exempt
+@login_required
+def save_page(request):
+    """Save page content from GrapesJS editor"""
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            html_content = data.get('html', '')
+            css_content = data.get('css', '')
+            
+            # Here you can save to database or file system
+            # For now, we'll save to a simple file
+            page_content = {
+                'html': html_content,
+                'css': css_content,
+                'created_by': request.user.username,
+                'created_at': timezone.now().isoformat()
+            }
+            
+            # Save to file (you might want to save to database instead)
+            import os
+            pages_dir = os.path.join('static', 'pages')
+            os.makedirs(pages_dir, exist_ok=True)
+            
+            filename = f"page_{request.user.id}_{int(timezone.now().timestamp())}.json"
+            filepath = os.path.join(pages_dir, filename)
+            
+            with open(filepath, 'w') as f:
+                json.dump(page_content, f, indent=2)
+            
+            return JsonResponse({
+                'success': True,
+                'message': 'Page saved successfully',
+                'filename': filename
+            })
+            
+        except Exception as e:
+            return JsonResponse({
+                'success': False,
+                'error': str(e)
+            })
+    
+    return JsonResponse({'success': False, 'error': 'Invalid request method'})

@@ -1,0 +1,629 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}User Settings - {{ block.super }}{% endblock %}
+
+{% block extra_css %}
+<link href="{% static 'css/style.css' %}" rel="stylesheet">
+<style>
+.settings-section {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.settings-section h3 {
+    color: #2c3e50;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #e9ecef;
+}
+
+.preference-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    margin-bottom: 0.75rem;
+    transition: all 0.3s ease;
+}
+
+.preference-item:hover {
+    background: #f8f9fa;
+    border-color: #dee2e6;
+}
+
+.preference-info h5 {
+    margin: 0 0 0.25rem 0;
+    color: #495057;
+}
+
+.preference-info small {
+    color: #6c757d;
+}
+
+.preference-actions .btn {
+    margin-left: 0.5rem;
+}
+
+.alert-custom {
+    border-radius: 8px;
+    border: none;
+    padding: 1rem 1.25rem;
+}
+
+.reset-warning {
+    background: #fff3cd;
+    color: #856404;
+    border-left: 4px solid #ffc107;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .preference-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .preference-actions {
+        margin-top: 1rem;
+        width: 100%;
+    }
+    
+    .preference-actions .btn {
+        margin: 0.25rem 0.5rem 0.25rem 0;
+    }
+}
+
+/* Accessibility */
+.btn:focus {
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+}
+
+.preference-item:focus-within {
+    outline: 2px solid #007bff;
+    outline-offset: 2px;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="row">
+        <div class="col-12">
+            <!-- Page Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h1 class="h2 text-primary mb-0">
+                        <i class="fas fa-cog me-2" aria-hidden="true"></i>User Settings
+                    </h1>
+                    <p class="text-muted mb-0">Manage your personal preferences and settings</p>
+                </div>
+                <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-1" aria-hidden="true"></i>Back to Dashboard
+                </a>
+            </div>
+
+            <!-- Dashboard Layout Settings -->
+            <div class="settings-section">
+                <h3>
+                    <i class="fas fa-th-large me-2 text-primary" aria-hidden="true"></i>
+                    Dashboard Layout
+                </h3>
+                
+                <div class="preference-item" id="dashboard-layout-pref">
+                    <div class="preference-info">
+                        <h5>Widget Positions</h5>
+                        <small>Your custom dashboard widget arrangement</small>
+                        <div class="mt-2">
+                            <span class="badge bg-info" id="dashboard-widgets-count">
+                                <i class="fas fa-cubes me-1" aria-hidden="true"></i>
+                                <span id="widget-count-text">Loading...</span>
+                            </span>
+                            <span class="badge bg-secondary ms-2" id="dashboard-last-updated">
+                                <i class="fas fa-clock me-1" aria-hidden="true"></i>
+                                <span id="last-updated-text">Never</span>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="preference-actions">
+                        <button type="button" class="btn btn-sm btn-outline-primary" id="export-dashboard-btn">
+                            <i class="fas fa-download me-1" aria-hidden="true"></i>Export Layout
+                        </button>
+                        <button type="button" class="btn btn-sm btn-warning" id="reset-dashboard-btn">
+                            <i class="fas fa-undo me-1" aria-hidden="true"></i>Reset to Default
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- List Order Settings -->
+            <div class="settings-section">
+                <h3>
+                    <i class="fas fa-list-ol me-2 text-primary" aria-hidden="true"></i>
+                    List Ordering Preferences
+                </h3>
+                
+                <div class="preference-item" id="countries-order-pref">
+                    <div class="preference-info">
+                        <h5>Countries Order</h5>
+                        <small>Custom ordering for country listings by continent</small>
+                        <div class="mt-2" id="countries-preferences-summary">
+                            <span class="badge bg-info">
+                                <i class="fas fa-flag me-1" aria-hidden="true"></i>
+                                <span id="countries-count">Loading...</span>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="preference-actions">
+                        <button type="button" class="btn btn-sm btn-outline-primary" id="view-countries-btn">
+                            <i class="fas fa-eye me-1" aria-hidden="true"></i>View Details
+                        </button>
+                        <button type="button" class="btn btn-sm btn-warning" id="reset-countries-btn">
+                            <i class="fas fa-undo me-1" aria-hidden="true"></i>Reset All
+                        </button>
+                    </div>
+                </div>
+
+                <div class="preference-item" id="industries-order-pref">
+                    <div class="preference-info">
+                        <h5>Industries Order</h5>
+                        <small>Custom ordering for industry listings by country</small>
+                        <div class="mt-2" id="industries-preferences-summary">
+                            <span class="badge bg-info">
+                                <i class="fas fa-industry me-1" aria-hidden="true"></i>
+                                <span id="industries-count">Loading...</span>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="preference-actions">
+                        <button type="button" class="btn btn-sm btn-outline-primary" id="view-industries-btn">
+                            <i class="fas fa-eye me-1" aria-hidden="true"></i>View Details
+                        </button>
+                        <button type="button" class="btn btn-sm btn-warning" id="reset-industries-btn">
+                            <i class="fas fa-undo me-1" aria-hidden="true"></i>Reset All
+                        </button>
+                    </div>
+                </div>
+
+                <div class="preference-item" id="companies-order-pref">
+                    <div class="preference-info">
+                        <h5>Companies Order</h5>
+                        <small>Custom ordering for company listings by industry</small>
+                        <div class="mt-2" id="companies-preferences-summary">
+                            <span class="badge bg-info">
+                                <i class="fas fa-building me-1" aria-hidden="true"></i>
+                                <span id="companies-count">Loading...</span>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="preference-actions">
+                        <button type="button" class="btn btn-sm btn-outline-primary" id="view-companies-btn">
+                            <i class="fas fa-eye me-1" aria-hidden="true"></i>View Details
+                        </button>
+                        <button type="button" class="btn btn-sm btn-warning" id="reset-companies-btn">
+                            <i class="fas fa-undo me-1" aria-hidden="true"></i>Reset All
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reset All Settings -->
+            <div class="settings-section">
+                <h3 class="text-danger">
+                    <i class="fas fa-exclamation-triangle me-2" aria-hidden="true"></i>
+                    Reset All Preferences
+                </h3>
+                
+                <div class="alert-custom reset-warning">
+                    <h6 class="fw-bold mb-2">
+                        <i class="fas fa-warning me-1" aria-hidden="true"></i>
+                        Warning: This action cannot be undone
+                    </h6>
+                    <p class="mb-3">
+                        This will reset all your custom preferences including dashboard layout, 
+                        list ordering, and any other personalization settings to their default values.
+                    </p>
+                    <button type="button" class="btn btn-danger" id="reset-all-btn">
+                        <i class="fas fa-trash-alt me-1" aria-hidden="true"></i>
+                        Reset All Preferences
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Confirmation Modal -->
+<div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmModalLabel">Confirm Action</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="confirmModalBody">
+                Are you sure you want to proceed?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" id="confirmActionBtn">Confirm</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Details Modal -->
+<div class="modal fade" id="detailsModal" tabindex="-1" aria-labelledby="detailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="detailsModalLabel">Preference Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="detailsModalBody">
+                <div class="text-center">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/drag-drop/sortable-handler.js' %}"></script>
+<script>
+// User Settings JavaScript
+class UserSettingsManager {
+    constructor() {
+        this.confirmModal = null;
+        this.detailsModal = null;
+        this.pendingAction = null;
+        this.init();
+    }
+
+    init() {
+        // Initialize modals
+        this.confirmModal = new bootstrap.Modal(document.getElementById('confirmModal'));
+        this.detailsModal = new bootstrap.Modal(document.getElementById('detailsModal'));
+        
+        // Load initial data
+        this.loadSettingsData();
+        
+        // Bind events
+        this.bindEvents();
+    }
+
+    bindEvents() {
+        // Dashboard actions
+        document.getElementById('export-dashboard-btn').addEventListener('click', () => {
+            this.exportDashboardLayout();
+        });
+        
+        document.getElementById('reset-dashboard-btn').addEventListener('click', () => {
+            this.confirmAction(
+                'Reset Dashboard Layout',
+                'This will reset your dashboard widget positions to the default layout. Are you sure?',
+                () => this.resetDashboardLayout()
+            );
+        });
+
+        // List order actions
+        document.getElementById('view-countries-btn').addEventListener('click', () => {
+            this.viewPreferenceDetails('list_order', 'countries');
+        });
+        
+        document.getElementById('reset-countries-btn').addEventListener('click', () => {
+            this.confirmAction(
+                'Reset Countries Order',
+                'This will reset all your custom country ordering preferences. Are you sure?',
+                () => this.resetPreferenceType('list_order', 'countries')
+            );
+        });
+
+        document.getElementById('view-industries-btn').addEventListener('click', () => {
+            this.viewPreferenceDetails('list_order', 'industries');
+        });
+        
+        document.getElementById('reset-industries-btn').addEventListener('click', () => {
+            this.confirmAction(
+                'Reset Industries Order',
+                'This will reset all your custom industry ordering preferences. Are you sure?',
+                () => this.resetPreferenceType('list_order', 'industries')
+            );
+        });
+
+        document.getElementById('view-companies-btn').addEventListener('click', () => {
+            this.viewPreferenceDetails('list_order', 'companies');
+        });
+        
+        document.getElementById('reset-companies-btn').addEventListener('click', () => {
+            this.confirmAction(
+                'Reset Companies Order',
+                'This will reset all your custom company ordering preferences. Are you sure?',
+                () => this.resetPreferenceType('list_order', 'companies')
+            );
+        });
+
+        // Reset all
+        document.getElementById('reset-all-btn').addEventListener('click', () => {
+            this.confirmAction(
+                'Reset All Preferences',
+                'This will permanently delete ALL your custom preferences including dashboard layout and list ordering. This action cannot be undone. Are you sure?',
+                () => this.resetAllPreferences()
+            );
+        });
+
+        // Confirm modal action
+        document.getElementById('confirmActionBtn').addEventListener('click', () => {
+            if (this.pendingAction) {
+                this.pendingAction();
+                this.confirmModal.hide();
+                this.pendingAction = null;
+            }
+        });
+    }
+
+    async loadSettingsData() {
+        try {
+            // Load dashboard widget preferences
+            const dashboardPrefs = await this.loadUserPreferences('widget_positions');
+            this.updateDashboardSummary(dashboardPrefs);
+            
+            // Load list order preferences
+            const listPrefs = await this.loadUserPreferences('list_order');
+            this.updateListOrderSummary(listPrefs);
+            
+        } catch (error) {
+            console.error('Failed to load settings data:', error);
+            this.showNotification('Failed to load settings data', 'warning');
+        }
+    }
+
+    async loadUserPreferences(preferenceType) {
+        const response = await fetch(`/api/preferences/get/?preference_type=${preferenceType}`, {
+            method: 'GET',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        });
+        
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        
+        return await response.json();
+    }
+
+    updateDashboardSummary(dashboardPrefs) {
+        const widgetCountElement = document.getElementById('widget-count-text');
+        const lastUpdatedElement = document.getElementById('last-updated-text');
+        
+        if (dashboardPrefs.success && dashboardPrefs.preference_data) {
+            const data = dashboardPrefs.preference_data;
+            const widgetCount = Object.keys(data.positions || {}).length;
+            widgetCountElement.textContent = `${widgetCount} widgets positioned`;
+            
+            if (data.timestamp) {
+                const date = new Date(data.timestamp);
+                lastUpdatedElement.textContent = date.toLocaleDateString();
+            }
+        } else {
+            widgetCountElement.textContent = 'Default layout';
+            lastUpdatedElement.textContent = 'Never';
+        }
+    }
+
+    updateListOrderSummary(listPrefs) {
+        // Count preferences by type
+        const counts = { countries: 0, industries: 0, companies: 0 };
+        
+        if (listPrefs.success && listPrefs.preferences) {
+            listPrefs.preferences.forEach(pref => {
+                if (pref.preference_key.startsWith('countries_')) counts.countries++;
+                else if (pref.preference_key.startsWith('industries_')) counts.industries++;
+                else if (pref.preference_key.startsWith('companies_')) counts.companies++;
+            });
+        }
+        
+        document.getElementById('countries-count').textContent = `${counts.countries} custom orders`;
+        document.getElementById('industries-count').textContent = `${counts.industries} custom orders`;
+        document.getElementById('companies-count').textContent = `${counts.companies} custom orders`;
+    }
+
+    confirmAction(title, message, action) {
+        document.getElementById('confirmModalLabel').textContent = title;
+        document.getElementById('confirmModalBody').textContent = message;
+        this.pendingAction = action;
+        this.confirmModal.show();
+    }
+
+    async exportDashboardLayout() {
+        try {
+            const prefs = await this.loadUserPreferences('widget_positions');
+            if (prefs.success && prefs.preference_data) {
+                const data = JSON.stringify(prefs.preference_data, null, 2);
+                const blob = new Blob([data], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'dashboard-layout.json';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                this.showNotification('Dashboard layout exported successfully!', 'success');
+            } else {
+                this.showNotification('No custom dashboard layout to export', 'info');
+            }
+        } catch (error) {
+            console.error('Export failed:', error);
+            this.showNotification('Failed to export dashboard layout', 'danger');
+        }
+    }
+
+    async resetDashboardLayout() {
+        try {
+            await this.resetPreferences('widget_positions');
+            this.showNotification('Dashboard layout reset to default!', 'success');
+            this.loadSettingsData();
+        } catch (error) {
+            console.error('Reset failed:', error);
+            this.showNotification('Failed to reset dashboard layout', 'danger');
+        }
+    }
+
+    async resetPreferenceType(preferenceType, subType) {
+        try {
+            const response = await fetch('/api/preferences/reset/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: JSON.stringify({
+                    preference_type: preferenceType,
+                    filter_key: subType
+                })
+            });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+            
+            this.showNotification(`${subType} preferences reset successfully!`, 'success');
+            this.loadSettingsData();
+        } catch (error) {
+            console.error('Reset failed:', error);
+            this.showNotification(`Failed to reset ${subType} preferences`, 'danger');
+        }
+    }
+
+    async resetAllPreferences() {
+        try {
+            const response = await fetch('/api/preferences/reset/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: JSON.stringify({ reset_all: true })
+            });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+            
+            this.showNotification('All preferences reset successfully!', 'success');
+            this.loadSettingsData();
+        } catch (error) {
+            console.error('Reset all failed:', error);
+            this.showNotification('Failed to reset all preferences', 'danger');
+        }
+    }
+
+    async viewPreferenceDetails(preferenceType, subType) {
+        document.getElementById('detailsModalLabel').textContent = `${subType.charAt(0).toUpperCase() + subType.slice(1)} Order Preferences`;
+        document.getElementById('detailsModalBody').innerHTML = `
+            <div class="text-center">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+        `;
+        
+        this.detailsModal.show();
+        
+        try {
+            const prefs = await this.loadUserPreferences(preferenceType);
+            
+            let content = '<div class="row">';
+            
+            if (prefs.success && prefs.preferences) {
+                const filteredPrefs = prefs.preferences.filter(p => 
+                    p.preference_key.startsWith(subType + '_')
+                );
+                
+                if (filteredPrefs.length > 0) {
+                    filteredPrefs.forEach(pref => {
+                        const keyParts = pref.preference_key.split('_');
+                        const id = keyParts[1];
+                        const itemCount = pref.preference_data.item_order?.length || 0;
+                        const lastUpdated = new Date(pref.updated_at).toLocaleDateString();
+                        
+                        content += `
+                            <div class="col-md-6 mb-3">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h6 class="card-title">${subType.slice(0, -1).charAt(0).toUpperCase() + subType.slice(1, -1)} ID: ${id}</h6>
+                                        <p class="card-text small text-muted">
+                                            ${itemCount} items ordered<br>
+                                            Updated: ${lastUpdated}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                } else {
+                    content += '<div class="col-12"><p class="text-muted text-center">No custom orders found for this type.</p></div>';
+                }
+            } else {
+                content += '<div class="col-12"><p class="text-muted text-center">No preferences found.</p></div>';
+            }
+            
+            content += '</div>';
+            document.getElementById('detailsModalBody').innerHTML = content;
+            
+        } catch (error) {
+            console.error('Failed to load preference details:', error);
+            document.getElementById('detailsModalBody').innerHTML = `
+                <div class="alert alert-danger">
+                    <i class="fas fa-exclamation-triangle me-1"></i>
+                    Failed to load preference details: ${error.message}
+                </div>
+            `;
+        }
+    }
+
+    showNotification(message, type) {
+        // Create notification element
+        const notification = document.createElement('div');
+        notification.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+        notification.style.cssText = 'top: 20px; right: 20px; z-index: 1050; min-width: 300px;';
+        notification.innerHTML = `
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        `;
+        
+        document.body.appendChild(notification);
+        
+        // Auto-remove after 5 seconds
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.parentNode.removeChild(notification);
+            }
+        }, 5000);
+    }
+}
+
+// Initialize when DOM is ready
+document.addEventListener('DOMContentLoaded', function() {
+    window.userSettingsManager = new UserSettingsManager();
+});
+</script>
+{% endblock %}

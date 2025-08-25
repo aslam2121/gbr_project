@@ -1,0 +1,383 @@
+/* Enhanced Drag & Drop Error Handling and Loading States */
+
+/* Loading Overlay */
+.dragdrop-loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.loading-content {
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    max-width: 300px;
+    width: 90%;
+}
+
+.loading-text {
+    margin-top: 1rem;
+    color: #6c757d;
+    font-weight: 500;
+}
+
+/* Container Loading Indicators */
+.container-loading-indicator {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.9);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    border-radius: 8px;
+}
+
+.sortable-list {
+    position: relative;
+}
+
+.container-loading-indicator.show,
+.container-loading-indicator[style*="block"] {
+    display: flex !important;
+}
+
+/* Offline Indicator */
+.offline-indicator {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1050;
+    max-width: 350px;
+    display: none;
+    animation: slideInRight 0.3s ease-out;
+}
+
+.offline-indicator.show {
+    display: block !important;
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* Network Status Indicators */
+.network-status-indicator {
+    display: inline-block;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.375rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.network-status-indicator.online {
+    background-color: #d1edff;
+    color: #0c63e4;
+}
+
+.network-status-indicator.offline {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+/* Enhanced Drag & Drop States */
+.draggable-item {
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.draggable-item.dragging {
+    opacity: 0.5;
+    transform: rotate(2deg);
+}
+
+.draggable-item.error-state {
+    border: 2px solid #dc3545;
+    background-color: #f8d7da;
+    animation: shake 0.5s ease-in-out;
+}
+
+.draggable-item.success-state {
+    border: 2px solid #198754;
+    background-color: #d1edff;
+    animation: pulse 0.5s ease-in-out;
+}
+
+.draggable-item.loading-state {
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+.draggable-item.loading-state::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    width: 16px;
+    height: 16px;
+    border: 2px solid #f3f3f3;
+    border-top: 2px solid #007bff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    transform: translateY(-50%);
+}
+
+/* Error States */
+.drag-drop-error {
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    border-radius: 0.375rem;
+    padding: 0.75rem 1rem;
+    margin: 0.5rem 0;
+    color: #721c24;
+}
+
+.drag-drop-error .error-icon {
+    color: #dc3545;
+    margin-right: 0.5rem;
+}
+
+.retry-button {
+    background-color: #ffc107;
+    border-color: #ffc107;
+    color: #000;
+    font-size: 0.875rem;
+    padding: 0.25rem 0.5rem;
+    margin-left: 0.5rem;
+}
+
+.retry-button:hover {
+    background-color: #e0a800;
+    border-color: #d39e00;
+}
+
+/* Empty States */
+.empty-state {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: #6c757d;
+}
+
+.empty-state-icon {
+    font-size: 3rem;
+    color: #dee2e6;
+    margin-bottom: 1rem;
+}
+
+.empty-state h4 {
+    color: #495057;
+    margin-bottom: 0.5rem;
+}
+
+/* No JavaScript Fallback */
+.no-js .draggable-item {
+    cursor: default;
+}
+
+.no-js .drag-handle {
+    display: none;
+}
+
+.no-js .fallback-controls {
+    display: block;
+    margin: 1rem 0;
+    padding: 1rem;
+    background-color: #f8f9fa;
+    border-radius: 0.375rem;
+    border: 1px solid #dee2e6;
+}
+
+.fallback-controls {
+    display: none;
+}
+
+.fallback-controls .btn {
+    margin: 0.25rem;
+}
+
+/* Mobile Enhancements */
+@media (max-width: 768px) {
+    .loading-content {
+        padding: 1.5rem;
+    }
+    
+    .offline-indicator {
+        position: fixed;
+        top: 10px;
+        left: 10px;
+        right: 10px;
+        max-width: none;
+    }
+    
+    .container-loading-indicator {
+        font-size: 0.875rem;
+    }
+}
+
+/* Animations */
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+}
+
+@keyframes spin {
+    0% { transform: translateY(-50%) rotate(0deg); }
+    100% { transform: translateY(-50%) rotate(360deg); }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Enhanced Notifications */
+.notification-enhanced {
+    animation: slideUp 0.3s ease-out;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border: none;
+    border-left: 4px solid;
+}
+
+.notification-enhanced.alert-success {
+    border-left-color: #198754;
+}
+
+.notification-enhanced.alert-danger {
+    border-left-color: #dc3545;
+}
+
+.notification-enhanced.alert-warning {
+    border-left-color: #ffc107;
+}
+
+.notification-enhanced.alert-info {
+    border-left-color: #0dcaf0;
+}
+
+/* Progress Indicators */
+.operation-progress {
+    position: relative;
+    overflow: hidden;
+}
+
+.operation-progress::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+    animation: progress-shine 1.5s infinite;
+}
+
+@keyframes progress-shine {
+    0% { left: -100%; }
+    100% { left: 100%; }
+}
+
+/* Accessibility Enhancements */
+.sr-only {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+}
+
+/* Focus indicators for error states */
+.draggable-item:focus-within.error-state {
+    outline: 2px solid #dc3545;
+    outline-offset: 2px;
+}
+
+.draggable-item:focus-within.success-state {
+    outline: 2px solid #198754;
+    outline-offset: 2px;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .draggable-item.error-state {
+        border-width: 3px;
+    }
+    
+    .draggable-item.success-state {
+        border-width: 3px;
+    }
+    
+    .network-status-indicator {
+        border: 1px solid;
+    }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+    .draggable-item,
+    .loading-content,
+    .offline-indicator,
+    .notification-enhanced {
+        animation: none !important;
+        transition: none !important;
+    }
+    
+    .draggable-item.loading-state::after {
+        animation: none !important;
+    }
+}
+
+/* Print styles */
+@media print {
+    .dragdrop-loading-overlay,
+    .offline-indicator,
+    .container-loading-indicator,
+    .drag-handle,
+    .retry-button {
+        display: none !important;
+    }
+    
+    .draggable-item {
+        break-inside: avoid;
+    }
+}

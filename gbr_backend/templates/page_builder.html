@@ -1,0 +1,1010 @@
+<!-- GrapesJS Page Builder Template -->
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <h2>Page Builder</h2>
+            <div class="mb-3">
+                <button id="save-page" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Save Page
+                </button>
+                <button id="load-page" class="btn btn-secondary">
+                    <i class="fas fa-folder-open"></i> Load Page
+                </button>
+                <button id="preview-page" class="btn btn-info">
+                    <i class="fas fa-eye"></i> Preview
+                </button>
+                <button id="export-html" class="btn btn-success">
+                    <i class="fas fa-download"></i> Export HTML
+                </button>
+                <button id="import-html" class="btn btn-warning">
+                    <i class="fas fa-upload"></i> Import HTML
+                </button>
+                <button id="clear-canvas" class="btn btn-danger">
+                    <i class="fas fa-trash"></i> Clear All
+                </button>
+                <button id="help-tutorial" class="btn btn-outline-info">
+                    <i class="fas fa-question-circle"></i> Help
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- GrapesJS Container -->
+    <div class="row">
+        <div class="col-md-3">
+            <!-- Blocks Panel -->
+            <div id="blocks-panel" style="height: 700px; overflow-y: auto; background: #f8f9fa; padding: 15px; border: 1px solid #dee2e6;">
+                <h5>Components</h5>
+                <div id="blocks"></div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div id="gjs">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h3>Welcome to GBR</h3>
+                        <p>Start building your page with drag and drop components.</p>
+                        <button class="btn btn-primary">Get Started</button>
+                    </div>
+                    <div class="col-md-6">
+                        <img src="https://picsum.photos/400/300" class="img-fluid" alt="Placeholder">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <!-- Panels Container -->
+            <div id="panels-container" style="height: 700px; background: #f8f9fa; border: 1px solid #dee2e6;">
+                <!-- Device Manager -->
+                <div class="panel-section">
+                    <h6 class="panel-title">
+                        <i class="fas fa-mobile-alt"></i> Device Preview
+                    </h6>
+                    <div id="device-panel" class="panel-content"></div>
+                </div>
+                
+                <!-- Layers Manager -->
+                <div class="panel-section">
+                    <h6 class="panel-title">
+                        <i class="fas fa-layer-group"></i> Layers
+                    </h6>
+                    <div id="layers-panel" class="panel-content"></div>
+                </div>
+                
+                <!-- Style Manager -->
+                <div class="panel-section">
+                    <h6 class="panel-title">
+                        <i class="fas fa-paint-brush"></i> Styles
+                    </h6>
+                    <div id="styles-panel" class="panel-content"></div>
+                </div>
+                
+                <!-- Traits Manager -->
+                <div class="panel-section">
+                    <h6 class="panel-title">
+                        <i class="fas fa-cog"></i> Settings
+                    </h6>
+                    <div id="traits-panel" class="panel-content"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Font Awesome for icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+<!-- GrapesJS CSS -->
+<link rel="stylesheet" href="https://unpkg.com/grapesjs/dist/css/grapes.min.css">
+
+<!-- GrapesJS JavaScript -->
+<script src="https://unpkg.com/grapesjs"></script>
+<script src="https://unpkg.com/grapesjs-preset-webpage"></script>
+
+<script>
+console.log('GrapesJS script loaded');
+console.log('grapesjs object:', typeof grapesjs);
+</script>
+
+<script>
+// Initialize GrapesJS with error handling
+try {
+    console.log('Initializing GrapesJS...');
+    
+    // Check if grapesjs is loaded
+    if (typeof grapesjs === 'undefined') {
+        throw new Error('GrapesJS library not loaded');
+    }
+    
+    const editor = grapesjs.init({
+        container: '#gjs',
+        height: '700px',
+        width: 'auto',
+        storageManager: {
+            type: 'local',
+            autosave: true,
+            autoload: true,
+            stepsBeforeSave: 1,
+        },
+        plugins: [
+            'grapesjs-preset-webpage'
+        ],
+        pluginsOpts: {
+            'grapesjs-preset-webpage': {
+                modalImportTitle: 'Import Template',
+                modalImportLabel: '<div style="margin-bottom: 10px; font-size: 13px;">Paste here your HTML/CSS and click Import</div>',
+                modalImportContent: function(editor) {
+                    return editor.getHtml() + '<style>' + editor.getCss() + '</style>'
+                },
+            }
+        },
+        blockManager: {
+            appendTo: '#blocks',
+        },
+        layerManager: {
+            appendTo: '#layers-panel',
+        },
+        selectorManager: {
+            appendTo: '#styles-panel',
+        },
+        styleManager: {
+            appendTo: '#styles-panel',
+            sectors: [
+                {
+                    name: 'Dimension',
+                    open: false,
+                    buildProps: ['width', 'min-height', 'padding'],
+                    properties: [
+                        {
+                            type: 'integer',
+                            name: 'Width',
+                            property: 'width',
+                            units: ['px', '%', 'em', 'rem', 'vw'],
+                            defaults: 'auto',
+                            min: 0,
+                        }
+                    ]
+                },
+                {
+                    name: 'Typography',
+                    open: false,
+                    buildProps: ['font-family', 'font-size', 'font-weight', 'letter-spacing', 'color', 'line-height'],
+                    properties: [
+                        {
+                            name: 'Font',
+                            property: 'font-family'
+                        },
+                        {
+                            name: 'Weight',
+                            property: 'font-weight'
+                        }
+                    ]
+                },
+                {
+                    name: 'Decorations',
+                    open: false,
+                    buildProps: ['opacity', 'background-color', 'border-radius', 'border', 'box-shadow'],
+                },
+                {
+                    name: 'Extra',
+                    open: false,
+                    buildProps: ['transition', 'perspective', 'transform'],
+                }
+            ]
+        },
+        traitManager: {
+            appendTo: '#traits-panel',
+        },
+        deviceManager: {
+            devices: [
+                {
+                    name: 'Desktop',
+                    width: '',
+                },
+                {
+                    name: 'Tablet',
+                    width: '768px',
+                    widthMedia: '992px',
+                },
+                {
+                    name: 'Mobile Portrait',
+                    width: '320px',
+                    widthMedia: '575px',
+                },
+            ]
+        },
+        panels: {
+            defaults: [
+                {
+                    id: 'device-panel',
+                    el: '#device-panel',
+                    buttons: [
+                        {
+                            id: 'device-desktop',
+                            label: '<i class="fas fa-desktop"></i>',
+                            command: 'set-device-desktop',
+                            active: true,
+                            togglable: false,
+                        },
+                        {
+                            id: 'device-tablet',
+                            label: '<i class="fas fa-tablet-alt"></i>',
+                            command: 'set-device-tablet',
+                            togglable: false,
+                        },
+                        {
+                            id: 'device-mobile',
+                            label: '<i class="fas fa-mobile-alt"></i>',
+                            command: 'set-device-mobile',
+                            togglable: false,
+                        },
+                    ],
+                }
+            ]
+        },
+        canvas: {
+            styles: [
+                'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css'
+            ]
+        },
+        fromElement: true,
+    });// Add device commands
+editor.Commands.add('set-device-desktop', {
+    run: (editor) => editor.setDevice('Desktop')
+});
+editor.Commands.add('set-device-tablet', {
+    run: (editor) => editor.setDevice('Tablet')
+});
+editor.Commands.add('set-device-mobile', {
+    run: (editor) => editor.setDevice('Mobile Portrait')
+});
+
+// Add custom blocks
+editor.BlockManager.add('text-block', {
+    id: 'text-block',
+    label: '<i class="fas fa-font"></i><br>Text',
+    content: '<div class="text-block" style="padding: 20px;">Insert your text here</div>',
+    category: 'Basic',
+    attributes: { class: 'gjs-block-section' }
+});
+
+editor.BlockManager.add('image-block', {
+    id: 'image-block', 
+    label: '<i class="fas fa-image"></i><br>Image',
+    content: '<img src="https://picsum.photos/300/200" style="max-width: 100%;" alt="Image">',
+    category: 'Basic',
+    attributes: { class: 'gjs-block-section' }
+});
+
+editor.BlockManager.add('button-block', {
+    id: 'button-block',
+    label: '<i class="fas fa-hand-pointer"></i><br>Button',
+    content: '<button class="btn btn-primary" style="padding: 10px 20px;">Click me</button>',
+    category: 'Basic',
+    attributes: { class: 'gjs-block-section' }
+});
+
+// Advanced Layout Blocks
+editor.BlockManager.add('navbar-block', {
+    id: 'navbar-block',
+    label: '<i class="fas fa-bars"></i><br>Navigation',
+    content: `
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <div class="container">
+                <a class="navbar-brand" href="#">Brand</a>
+                <button class="navbar-toggler" type="button">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-nav ms-auto">
+                    <a class="nav-link" href="#">Home</a>
+                    <a class="nav-link" href="#">About</a>
+                    <a class="nav-link" href="#">Services</a>
+                    <a class="nav-link" href="#">Contact</a>
+                </div>
+            </div>
+        </nav>
+    `,
+    category: 'Layout',
+    attributes: { class: 'gjs-block-section' }
+});
+
+editor.BlockManager.add('hero-section', {
+    id: 'hero-section',
+    label: '<i class="fas fa-star"></i><br>Hero Section',
+    content: `
+        <section class="hero" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 100px 20px; text-align: center;">
+            <div class="container">
+                <h1 style="font-size: 3.5rem; margin-bottom: 1rem; font-weight: bold;">Welcome to GBR</h1>
+                <p style="font-size: 1.25rem; margin-bottom: 2rem; opacity: 0.9;">Build amazing pages with our drag and drop builder</p>
+                <button class="btn btn-light btn-lg" style="padding: 15px 30px; font-size: 1.1rem;">Get Started</button>
+            </div>
+        </section>
+    `,
+    category: 'Sections',
+    attributes: { class: 'gjs-block-section' }
+});
+
+editor.BlockManager.add('card-block', {
+    id: 'card-block',
+    label: '<i class="fas fa-id-card"></i><br>Card',
+    content: `
+        <div class="card" style="max-width: 350px; margin: 20px auto;">
+            <img src="https://picsum.photos/350/200" class="card-img-top" alt="Card image">
+            <div class="card-body">
+                <h5 class="card-title">Card Title</h5>
+                <p class="card-text">Some quick example text to build on the card title.</p>
+                <a href="#" class="btn btn-primary">Go somewhere</a>
+            </div>
+        </div>
+    `,
+    category: 'Components',
+    attributes: { class: 'gjs-block-section' }
+});
+
+editor.BlockManager.add('features-grid', {
+    id: 'features-grid',
+    label: '<i class="fas fa-th"></i><br>Features Grid',
+    content: `
+        <section class="features" style="padding: 80px 20px; background: #f8f9fa;">
+            <div class="container">
+                <div class="row text-center">
+                    <div class="col-md-4 mb-4">
+                        <div class="feature-box" style="padding: 30px;">
+                            <i class="fas fa-rocket fa-3x text-primary mb-3"></i>
+                            <h4>Fast & Reliable</h4>
+                            <p>Lightning fast performance with 99.9% uptime guarantee.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-4">
+                        <div class="feature-box" style="padding: 30px;">
+                            <i class="fas fa-shield-alt fa-3x text-success mb-3"></i>
+                            <h4>Secure</h4>
+                            <p>Enterprise-grade security to protect your data.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-4">
+                        <div class="feature-box" style="padding: 30px;">
+                            <i class="fas fa-headset fa-3x text-info mb-3"></i>
+                            <h4>24/7 Support</h4>
+                            <p>Round-the-clock customer support whenever you need it.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    `,
+    category: 'Sections',
+    attributes: { class: 'gjs-block-section' }
+});
+
+editor.BlockManager.add('contact-form', {
+    id: 'contact-form',
+    label: '<i class="fas fa-envelope"></i><br>Contact Form',
+    content: `
+        <section class="contact-form" style="padding: 60px 20px;">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-md-8">
+                        <h2 class="text-center mb-4">Get In Touch</h2>
+                        <form>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">First Name</label>
+                                    <input type="text" class="form-control" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Last Name</label>
+                                    <input type="text" class="form-control" required>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Email</label>
+                                <input type="email" class="form-control" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Message</label>
+                                <textarea class="form-control" rows="5" required></textarea>
+                            </div>
+                            <div class="text-center">
+                                <button type="submit" class="btn btn-primary btn-lg">Send Message</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+    `,
+    category: 'Forms',
+    attributes: { class: 'gjs-block-section' }
+});
+
+editor.BlockManager.add('footer-block', {
+    id: 'footer-block',
+    label: '<i class="fas fa-shoe-prints"></i><br>Footer',
+    content: `
+        <footer class="footer bg-dark text-light" style="padding: 60px 20px 20px;">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-4 mb-4">
+                        <h5>About Us</h5>
+                        <p>We are a team of passionate developers creating amazing web experiences.</p>
+                    </div>
+                    <div class="col-md-4 mb-4">
+                        <h5>Quick Links</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="#" class="text-light">Home</a></li>
+                            <li><a href="#" class="text-light">About</a></li>
+                            <li><a href="#" class="text-light">Services</a></li>
+                            <li><a href="#" class="text-light">Contact</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-md-4 mb-4">
+                        <h5>Contact Info</h5>
+                        <p><i class="fas fa-envelope"></i> info@gbr.com</p>
+                        <p><i class="fas fa-phone"></i> (555) 123-4567</p>
+                        <div class="social-links">
+                            <a href="#" class="text-light me-3"><i class="fab fa-facebook fa-lg"></i></a>
+                            <a href="#" class="text-light me-3"><i class="fab fa-twitter fa-lg"></i></a>
+                            <a href="#" class="text-light me-3"><i class="fab fa-linkedin fa-lg"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <hr class="mt-4">
+                <div class="text-center">
+                    <p>&copy; 2025 GBR. All rights reserved.</p>
+                </div>
+            </div>
+        </footer>
+    `,
+    category: 'Sections',
+    attributes: { class: 'gjs-block-section' }
+});
+
+editor.BlockManager.add('two-columns', {
+    id: 'two-columns',
+    label: '<i class="fas fa-columns"></i><br>2 Columns',
+    content: `
+        <div class="row" style="padding: 40px 20px;">
+            <div class="col-md-6" style="padding: 20px;">
+                <h3>Column 1</h3>
+                <p>Content for the first column goes here.</p>
+            </div>
+            <div class="col-md-6" style="padding: 20px;">
+                <h3>Column 2</h3>
+                <p>Content for the second column goes here.</p>
+            </div>
+        </div>
+    `,
+    category: 'Layout',
+    attributes: { class: 'gjs-block-section' }
+});
+
+editor.BlockManager.add('three-columns', {
+    id: 'three-columns',
+    label: '<i class="fas fa-pause"></i><br>3 Columns',
+    content: `
+        <div class="row" style="padding: 40px 20px;">
+            <div class="col-md-4" style="padding: 20px;">
+                <h4>Column 1</h4>
+                <p>First column content.</p>
+            </div>
+            <div class="col-md-4" style="padding: 20px;">
+                <h4>Column 2</h4>
+                <p>Second column content.</p>
+            </div>
+            <div class="col-md-4" style="padding: 20px;">
+                <h4>Column 3</h4>
+                <p>Third column content.</p>
+            </div>
+        </div>
+    `,
+    category: 'Layout',
+    attributes: { class: 'gjs-block-section' }
+});
+
+// Custom blocks
+editor.BlockManager.add('custom-hero', {
+    label: 'Hero Section',
+    content: `
+        <section class="hero bg-primary text-white py-5">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-8">
+                        <h1>Welcome to GBR</h1>
+                        <p class="lead">Build amazing pages with our drag and drop builder</p>
+                        <a href="#" class="btn btn-light btn-lg">Get Started</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    `,
+    category: 'GBR Components'
+});
+
+editor.BlockManager.add('custom-features', {
+    label: 'Features Section',
+    content: `
+        <section class="features py-5">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-4 text-center mb-4">
+                        <i class="fas fa-star fa-3x text-primary mb-3"></i>
+                        <h4>Feature 1</h4>
+                        <p>Description of feature 1</p>
+                    </div>
+                    <div class="col-md-4 text-center mb-4">
+                        <i class="fas fa-heart fa-3x text-primary mb-3"></i>
+                        <h4>Feature 2</h4>
+                        <p>Description of feature 2</p>
+                    </div>
+                    <div class="col-md-4 text-center mb-4">
+                        <i class="fas fa-rocket fa-3x text-primary mb-3"></i>
+                        <h4>Feature 3</h4>
+                        <p>Description of feature 3</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    `,
+    category: 'GBR Components'
+});
+
+// Export HTML functionality
+document.getElementById('export-html').addEventListener('click', function() {
+    const html = editor.getHtml();
+    const css = editor.getCss();
+    const fullHtml = `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exported Page</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>${css}</style>
+</head>
+<body>
+    ${html}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>`;
+    
+    const blob = new Blob([fullHtml], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'page.html';
+    a.click();
+    URL.revokeObjectURL(url);
+});
+
+// Import HTML functionality
+document.getElementById('import-html').addEventListener('click', function() {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.html';
+    input.onchange = function(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const content = e.target.result;
+                // Extract body content
+                const bodyMatch = content.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
+                if (bodyMatch) {
+                    editor.setComponents(bodyMatch[1]);
+                }
+                // Extract style content
+                const styleMatch = content.match(/<style[^>]*>([\s\S]*?)<\/style>/i);
+                if (styleMatch) {
+                    editor.setStyle(styleMatch[1]);
+                }
+                alert('HTML imported successfully!');
+            };
+            reader.readAsText(file);
+        }
+    };
+    input.click();
+});
+
+// Clear canvas functionality
+document.getElementById('clear-canvas').addEventListener('click', function() {
+    if (confirm('Are you sure you want to clear the entire canvas? This action cannot be undone.')) {
+        editor.setComponents('');
+        editor.setStyle('');
+        alert('Canvas cleared successfully!');
+    }
+});
+
+// Undo/Redo functionality
+document.addEventListener('keydown', function(e) {
+    if (e.ctrlKey || e.metaKey) {
+        if (e.key === 'z' && !e.shiftKey) {
+            e.preventDefault();
+            editor.UndoManager.undo();
+        } else if (e.key === 'z' && e.shiftKey || e.key === 'y') {
+            e.preventDefault();
+            editor.UndoManager.redo();
+        } else if (e.key === 's') {
+            e.preventDefault();
+            document.getElementById('save-page').click();
+        }
+    }
+});
+
+// Auto-save functionality
+let autoSaveInterval;
+function startAutoSave() {
+    autoSaveInterval = setInterval(function() {
+        const html = editor.getHtml();
+        const css = editor.getCss();
+        localStorage.setItem('grapesjs-autosave-html', html);
+        localStorage.setItem('grapesjs-autosave-css', css);
+        console.log('Auto-saved at:', new Date().toLocaleTimeString());
+    }, 30000); // Auto-save every 30 seconds
+}
+
+// Load auto-saved content on page load
+function loadAutoSave() {
+    const savedHtml = localStorage.getItem('grapesjs-autosave-html');
+    const savedCss = localStorage.getItem('grapesjs-autosave-css');
+    if (savedHtml || savedCss) {
+        if (confirm('Auto-saved content found. Would you like to restore it?')) {
+            if (savedHtml) editor.setComponents(savedHtml);
+            if (savedCss) editor.setStyle(savedCss);
+        }
+    }
+}
+
+// Start auto-save and load any existing auto-save
+startAutoSave();
+loadAutoSave();
+
+// Help tutorial functionality
+document.getElementById('help-tutorial').addEventListener('click', function() {
+    const helpContent = `
+        <div class="help-tutorial">
+            <h4><i class="fas fa-graduation-cap"></i> GrapesJS Page Builder Tutorial</h4>
+            
+            <div class="tutorial-section">
+                <h5><i class="fas fa-mouse-pointer"></i> Basic Usage</h5>
+                <ul>
+                    <li><strong>Drag & Drop:</strong> Drag blocks from the left panel into the canvas</li>
+                    <li><strong>Edit Content:</strong> Double-click on text to edit it</li>
+                    <li><strong>Select Elements:</strong> Click on any element to select and style it</li>
+                    <li><strong>Delete Elements:</strong> Select an element and press Delete key</li>
+                </ul>
+            </div>
+            
+            <div class="tutorial-section">
+                <h5><i class="fas fa-cubes"></i> Available Blocks</h5>
+                <ul>
+                    <li><strong>Basic:</strong> Text, Images, Buttons</li>
+                    <li><strong>Layout:</strong> Navigation, Columns, Grids</li>
+                    <li><strong>Sections:</strong> Hero, Features, Footer</li>
+                    <li><strong>Components:</strong> Cards, Forms</li>
+                </ul>
+            </div>
+            
+            <div class="tutorial-section">
+                <h5><i class="fas fa-palette"></i> Styling</h5>
+                <ul>
+                    <li><strong>Right Panel:</strong> Use device preview, layers, styles, and settings</li>
+                    <li><strong>Style Manager:</strong> Customize colors, fonts, spacing, and more</li>
+                    <li><strong>Responsive:</strong> Switch between Desktop, Tablet, and Mobile views</li>
+                </ul>
+            </div>
+            
+            <div class="tutorial-section">
+                <h5><i class="fas fa-keyboard"></i> Keyboard Shortcuts</h5>
+                <ul>
+                    <li><strong>Ctrl+Z:</strong> Undo last action</li>
+                    <li><strong>Ctrl+Shift+Z:</strong> Redo last action</li>
+                    <li><strong>Ctrl+S:</strong> Save page</li>
+                    <li><strong>Delete:</strong> Remove selected element</li>
+                </ul>
+            </div>
+            
+            <div class="tutorial-section">
+                <h5><i class="fas fa-tools"></i> Advanced Features</h5>
+                <ul>
+                    <li><strong>Auto-save:</strong> Your work is automatically saved every 30 seconds</li>
+                    <li><strong>Export HTML:</strong> Download your page as a complete HTML file</li>
+                    <li><strong>Import HTML:</strong> Upload and edit existing HTML files</li>
+                    <li><strong>Preview:</strong> See your page as visitors will see it</li>
+                </ul>
+            </div>
+        </div>
+        
+        <style>
+            .help-tutorial { max-height: 500px; overflow-y: auto; }
+            .tutorial-section { margin-bottom: 20px; }
+            .tutorial-section h5 { color: #007bff; margin-bottom: 10px; }
+            .tutorial-section ul { margin-left: 20px; }
+            .tutorial-section li { margin-bottom: 5px; }
+        </style>
+    `;
+    
+    // Create modal
+    const modal = document.createElement('div');
+    modal.style.cssText = `
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+        background: rgba(0,0,0,0.5); z-index: 10000; display: flex; 
+        align-items: center; justify-content: center;
+    `;
+    
+    const modalContent = document.createElement('div');
+    modalContent.style.cssText = `
+        background: white; padding: 30px; border-radius: 10px; 
+        max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    `;
+    
+    modalContent.innerHTML = helpContent + `
+        <div class="text-center mt-3">
+            <button class="btn btn-primary" onclick="this.closest('.modal-overlay').remove()">
+                <i class="fas fa-check"></i> Got it!
+            </button>
+        </div>
+    `;
+    
+    modal.className = 'modal-overlay';
+    modal.appendChild(modalContent);
+    document.body.appendChild(modal);
+    
+    // Close on background click
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+            modal.remove();
+        }
+    });
+});
+
+// Save functionality
+document.getElementById('save-page').addEventListener('click', function() {
+    const html = editor.getHtml();
+    const css = editor.getCss();
+    
+    // Send to Django backend
+    fetch('/save-page/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': '{{ csrf_token }}',
+        },
+        body: JSON.stringify({
+            html: html,
+            css: css
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Page saved successfully!');
+        } else {
+            alert('Error saving page: ' + data.error);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error saving page');
+    });
+});
+
+// Preview functionality
+document.getElementById('preview-page').addEventListener('click', function() {
+    const html = editor.getHtml();
+    const css = editor.getCss();
+    const previewWindow = window.open('', '_blank');
+    previewWindow.document.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Preview</title>
+            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+            <link rel="stylesheet" href="/static/css/style.css">
+            <style>${css}</style>
+        </head>
+        <body>
+            ${html}
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"><\/script>
+        </body>
+        </html>
+    `);
+});
+
+} catch (error) {
+    console.error('Error initializing GrapesJS:', error);
+    document.getElementById('gjs').innerHTML = `
+        <div class="alert alert-danger">
+            <h4>Error Loading Page Builder</h4>
+            <p>Failed to initialize GrapesJS: ${error.message}</p>
+            <p>Please check your internet connection and try refreshing the page.</p>
+        </div>
+    `;
+}
+</script>
+
+<style>
+/* Custom GrapesJS styling */
+.gjs-cv-canvas {
+    background: white;
+}
+
+/* Blocks Panel Styling */
+#blocks-panel {
+    border-radius: 8px;
+}
+
+#blocks-panel h5 {
+    margin-bottom: 15px;
+    color: #495057;
+    font-weight: 600;
+}
+
+.gjs-block {
+    background: white;
+    border: 2px solid #e9ecef;
+    border-radius: 6px;
+    margin: 8px 0;
+    padding: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+    font-size: 12px;
+    color: #495057;
+}
+
+.gjs-block:hover {
+    border-color: #007bff;
+    background: #f8f9fc;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0,123,255,0.15);
+}
+
+.gjs-block-category {
+    margin: 15px 0 10px 0;
+    font-weight: 600;
+    color: #6c757d;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid #e9ecef;
+    padding-bottom: 5px;
+}
+
+/* Panels Container Styling */
+#panels-container {
+    border-radius: 8px;
+    padding: 15px;
+}
+
+.panel-section {
+    margin-bottom: 20px;
+    border-bottom: 1px solid #e9ecef;
+    padding-bottom: 15px;
+}
+
+.panel-section:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+
+.panel-title {
+    margin-bottom: 10px;
+    color: #495057;
+    font-weight: 600;
+    font-size: 14px;
+    padding: 8px 0;
+    border-bottom: 2px solid #007bff;
+    display: inline-block;
+}
+
+.panel-content {
+    min-height: 100px;
+    max-height: 200px;
+    overflow-y: auto;
+    font-size: 13px;
+}
+
+/* Device buttons styling */
+#device-panel .gjs-pn-btn {
+    margin: 5px;
+    padding: 8px 12px;
+    border: 1px solid #dee2e6;
+    background: white;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+#device-panel .gjs-pn-btn:hover,
+#device-panel .gjs-pn-btn.gjs-pn-active {
+    background: #007bff;
+    color: white;
+    border-color: #007bff;
+}
+
+/* Style Manager styling */
+#styles-panel .gjs-sm-sector {
+    border: 1px solid #e9ecef;
+    border-radius: 4px;
+    margin-bottom: 10px;
+}
+
+#styles-panel .gjs-sm-title {
+    background: #f8f9fa;
+    padding: 8px 12px;
+    font-weight: 600;
+    font-size: 12px;
+    border-bottom: 1px solid #e9ecef;
+    cursor: pointer;
+}
+
+/* Layers Panel styling */
+#layers-panel .gjs-lm-layer {
+    padding: 5px 10px;
+    border-bottom: 1px solid #f0f0f0;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+#layers-panel .gjs-lm-layer:hover {
+    background: #f8f9fa;
+}
+
+/* Traits Panel styling */
+#traits-panel .gjs-trt-trait {
+    margin-bottom: 10px;
+    padding: 8px;
+    border: 1px solid #e9ecef;
+    border-radius: 4px;
+    background: white;
+}
+
+#traits-panel .gjs-trt-trait label {
+    font-weight: 600;
+    font-size: 11px;
+    color: #495057;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+}
+
+#gjs {
+    position: relative;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+/* Canvas styling */
+.gjs-cv-canvas {
+    background: #f8f9fa;
+}
+
+.gjs-frame {
+    border-radius: 4px;
+}
+
+/* Toolbar styling */
+.btn i {
+    margin-right: 5px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1200px) {
+    .panel-content {
+        max-height: 150px;
+    }
+    
+    .gjs-block {
+        font-size: 11px;
+        padding: 8px;
+    }
+}
+</style>
+
+{% endblock %}

@@ -1,0 +1,480 @@
+/* Optimized CSS for High-Performance Drag & Drop
+   Features: Hardware acceleration, optimized animations, reduced repaints */
+
+/* ============================================================================
+   PERFORMANCE OPTIMIZATIONS - HARDWARE ACCELERATION
+   ============================================================================ */
+
+/* Force hardware acceleration for drag elements */
+.sortable-drag-optimized,
+.sortable-ghost-optimized,
+.sortable-chosen-optimized {
+    /* Hardware acceleration triggers */
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    perspective: 1000px;
+    will-change: transform, opacity;
+    
+    /* Optimize for compositing */
+    isolation: isolate;
+    contain: layout style paint;
+}
+
+/* Optimized drag state - use transforms instead of position changes */
+.sortable-drag-optimized {
+    opacity: 0.8;
+    transform: translateZ(0) scale(1.02);
+    transition: transform 120ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    
+    /* Prevent layout shifts */
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    
+    /* Reduce repaints */
+    pointer-events: none;
+}
+
+/* Ghost element optimization */
+.sortable-ghost-optimized {
+    opacity: 0.4;
+    transform: translateZ(0) scale(0.98);
+    transition: opacity 100ms ease-out, transform 100ms ease-out;
+    
+    /* Visual feedback without layout changes */
+    border: 2px dashed var(--bs-primary);
+    background-color: rgba(var(--bs-primary-rgb), 0.05);
+}
+
+/* Selected element optimization */
+.sortable-chosen-optimized {
+    transform: translateZ(0);
+    transition: transform 80ms ease-out;
+    
+    /* Immediate visual feedback */
+    background-color: rgba(var(--bs-primary-rgb), 0.08);
+    border-color: var(--bs-primary);
+}
+
+/* ============================================================================
+   60FPS ANIMATIONS - OPTIMIZED KEYFRAMES
+   ============================================================================ */
+
+/* Smooth entry animation */
+@keyframes optimizedSlideIn {
+    0% {
+        transform: translateZ(0) translateY(-10px);
+        opacity: 0;
+    }
+    100% {
+        transform: translateZ(0) translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Optimized loading spinner */
+@keyframes optimizedSpin {
+    0% {
+        transform: translateZ(0) rotate(0deg);
+    }
+    100% {
+        transform: translateZ(0) rotate(360deg);
+    }
+}
+
+/* Smooth pulse for loading states */
+@keyframes optimizedPulse {
+    0%, 100% {
+        transform: translateZ(0) scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: translateZ(0) scale(1.05);
+        opacity: 0.8;
+    }
+}
+
+/* Shake animation for errors - minimal repaints */
+@keyframes optimizedShake {
+    0%, 100% {
+        transform: translateZ(0) translateX(0);
+    }
+    25% {
+        transform: translateZ(0) translateX(-5px);
+    }
+    75% {
+        transform: translateZ(0) translateX(5px);
+    }
+}
+
+/* ============================================================================
+   VIRTUAL SCROLLING OPTIMIZATIONS
+   ============================================================================ */
+
+/* Virtual scroll container */
+.virtual-scroll-container {
+    /* Optimize scrolling performance */
+    overflow-y: auto;
+    overflow-x: hidden;
+    
+    /* Enable hardware acceleration */
+    transform: translateZ(0);
+    will-change: scroll-position;
+    
+    /* Smooth scrolling */
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    
+    /* Optimize rendering */
+    contain: layout style paint size;
+}
+
+/* Virtual scroll spacers - no visual properties to reduce repaints */
+.virtual-scroll-spacer-top,
+.virtual-scroll-spacer-bottom {
+    width: 100%;
+    pointer-events: none;
+    contain: layout size;
+    /* No background, border, or visual properties */
+}
+
+/* Optimized list items for virtual scrolling */
+.virtual-list-item {
+    /* Optimize for frequent show/hide */
+    contain: layout style paint;
+    will-change: display;
+    
+    /* Prevent layout shifts */
+    min-height: var(--item-height, 60px);
+    box-sizing: border-box;
+}
+
+/* ============================================================================
+   LOADING STATES - OPTIMIZED OVERLAYS
+   ============================================================================ */
+
+/* High-performance loading overlay */
+.loading-overlay-optimized {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    
+    /* Hardware acceleration */
+    transform: translateZ(0);
+    will-change: opacity;
+    
+    /* Optimize compositing */
+    isolation: isolate;
+    contain: layout style paint;
+    
+    /* Visual properties */
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(2px);
+    
+    /* Smooth transitions */
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 200ms ease-out, visibility 200ms ease-out;
+    
+    /* Center content */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+
+.loading-overlay-optimized.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Optimized spinner */
+.loading-spinner-optimized {
+    width: 40px;
+    height: 40px;
+    border: 3px solid rgba(var(--bs-primary-rgb), 0.2);
+    border-top: 3px solid var(--bs-primary);
+    border-radius: 50%;
+    
+    /* Hardware accelerated animation */
+    animation: optimizedSpin 1s linear infinite;
+    transform: translateZ(0);
+    will-change: transform;
+}
+
+/* ============================================================================
+   PERFORMANCE INDICATORS
+   ============================================================================ */
+
+/* Network status indicator */
+.network-status-optimized {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 10000;
+    
+    /* Optimize for frequent updates */
+    transform: translateZ(0);
+    will-change: background-color, opacity;
+    contain: layout style paint;
+    
+    /* Visual styling */
+    padding: 8px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    
+    /* Smooth transitions */
+    transition: all 200ms ease-out;
+    opacity: 0;
+    transform: translateY(-10px) translateZ(0);
+}
+
+.network-status-optimized.online {
+    background-color: #28a745;
+    color: white;
+    opacity: 1;
+    transform: translateY(0) translateZ(0);
+}
+
+.network-status-optimized.offline {
+    background-color: #dc3545;
+    color: white;
+    opacity: 1;
+    transform: translateY(0) translateZ(0);
+    animation: optimizedPulse 2s infinite;
+}
+
+/* FPS counter for performance monitoring */
+.fps-counter {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    
+    /* Optimize for frequent updates */
+    transform: translateZ(0);
+    will-change: contents;
+    contain: layout style paint;
+    
+    /* Visual styling */
+    background: rgba(0, 0, 0, 0.8);
+    color: #00ff00;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-family: monospace;
+    font-size: 11px;
+    z-index: 9999;
+    
+    /* Only show in development */
+    display: none;
+}
+
+.fps-counter.debug-mode {
+    display: block;
+}
+
+/* ============================================================================
+   ERROR STATES - OPTIMIZED FEEDBACK
+   ============================================================================ */
+
+/* Error container with optimized animations */
+.error-state-optimized {
+    /* Optimize for show/hide animations */
+    transform: translateZ(0);
+    will-change: opacity, transform;
+    contain: layout style paint;
+    
+    /* Visual styling */
+    background: linear-gradient(135deg, #fee, #fdd);
+    border-left: 4px solid #dc3545;
+    padding: 12px 16px;
+    margin: 8px 0;
+    border-radius: 4px;
+    
+    /* Smooth entry animation */
+    animation: optimizedSlideIn 300ms ease-out;
+}
+
+.error-state-optimized.shake {
+    animation: optimizedShake 500ms ease-out;
+}
+
+/* Retry button optimization */
+.retry-button-optimized {
+    /* Hardware acceleration for hover effects */
+    transform: translateZ(0);
+    will-change: transform, background-color;
+    transition: all 150ms ease-out;
+    
+    /* Visual styling */
+    background: var(--bs-primary);
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.retry-button-optimized:hover {
+    transform: translateZ(0) translateY(-1px);
+    background: var(--bs-primary-dark, #0056b3);
+    box-shadow: 0 2px 8px rgba(var(--bs-primary-rgb), 0.3);
+}
+
+/* ============================================================================
+   RESPONSIVE OPTIMIZATIONS
+   ============================================================================ */
+
+/* Mobile-specific optimizations */
+@media (max-width: 768px) {
+    /* Reduce animation complexity on mobile */
+    .sortable-drag-optimized {
+        animation-duration: 0.2s;
+        transform: translateZ(0) scale(1.01);
+    }
+    
+    /* Simplify shadows on mobile */
+    .sortable-drag-optimized {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    
+    /* Optimize touch interactions */
+    .sortable-list-optimized .list-group-item {
+        min-height: 48px; /* Better touch targets */
+        transform: translateZ(0); /* Hardware acceleration */
+    }
+}
+
+/* High-resolution display optimizations */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    /* Sharper borders and shadows for retina displays */
+    .sortable-drag-optimized {
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+    }
+}
+
+/* ============================================================================
+   ACCESSIBILITY OPTIMIZATIONS
+   ============================================================================ */
+
+/* Reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+    /* Disable non-essential animations */
+    .sortable-drag-optimized,
+    .sortable-ghost-optimized,
+    .sortable-chosen-optimized {
+        animation: none;
+        transition: none;
+    }
+    
+    /* Keep essential feedback but reduce motion */
+    .loading-spinner-optimized {
+        animation: none;
+        border-top-color: var(--bs-primary);
+    }
+    
+    /* Instant state changes */
+    .loading-overlay-optimized {
+        transition: opacity 0s;
+    }
+}
+
+/* High contrast mode optimizations */
+@media (prefers-contrast: high) {
+    .sortable-drag-optimized {
+        border: 2px solid;
+        background: white;
+    }
+    
+    .sortable-ghost-optimized {
+        border: 2px solid;
+        background: white;
+        opacity: 0.7;
+    }
+}
+
+/* ============================================================================
+   DEVELOPMENT AND DEBUGGING
+   ============================================================================ */
+
+/* Performance debugging styles */
+.debug-performance .sortable-list-optimized {
+    outline: 1px solid red;
+}
+
+.debug-performance .virtual-scroll-spacer-top,
+.debug-performance .virtual-scroll-spacer-bottom {
+    background: rgba(255, 0, 0, 0.1);
+}
+
+.debug-performance .loading-overlay-optimized {
+    outline: 2px solid green;
+}
+
+/* Frame rate visualization */
+.debug-frames {
+    position: fixed;
+    top: 50px;
+    right: 20px;
+    width: 200px;
+    height: 60px;
+    background: rgba(0, 0, 0, 0.8);
+    color: #00ff00;
+    font-family: monospace;
+    font-size: 10px;
+    padding: 8px;
+    border-radius: 4px;
+    z-index: 10000;
+    display: none;
+}
+
+.debug-frames.active {
+    display: block;
+}
+
+/* ============================================================================
+   UTILITY CLASSES FOR PERFORMANCE
+   ============================================================================ */
+
+/* Force hardware acceleration utility */
+.hw-accelerated {
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    perspective: 1000px;
+}
+
+/* Optimize for frequent changes */
+.will-change-transform {
+    will-change: transform;
+}
+
+.will-change-opacity {
+    will-change: opacity;
+}
+
+.will-change-contents {
+    will-change: contents;
+}
+
+/* Layout containment utilities */
+.contain-layout {
+    contain: layout;
+}
+
+.contain-style {
+    contain: style;
+}
+
+.contain-paint {
+    contain: paint;
+}
+
+.contain-size {
+    contain: size;
+}
+
+.contain-all {
+    contain: layout style paint size;
+}

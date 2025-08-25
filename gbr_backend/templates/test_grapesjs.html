@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GrapesJS Test</title>
+    <link rel="stylesheet" href="https://unpkg.com/grapesjs/dist/css/grapes.min.css">
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+        #gjs {
+            height: 100vh;
+            margin-left: 300px; /* Make room for blocks panel */
+        }
+        #blocks {
+            border-right: 1px solid #ddd;
+        }
+        .gjs-block {
+            background: white;
+            border: 1px solid #ddd;
+            margin: 5px 0;
+            padding: 10px;
+            cursor: pointer;
+            border-radius: 3px;
+        }
+        .gjs-block:hover {
+            background: #f0f0f0;
+        }
+    </style>
+</head>
+<body>
+    <div id="gjs">
+        <div style="padding: 50px; text-align: center;">
+            <h1>Hello GrapesJS!</h1>
+            <p>This is a test to see if GrapesJS loads correctly.</p>
+        </div>
+    </div>
+
+    <!-- Add blocks container -->
+    <div id="blocks" style="position: fixed; top: 0; left: 0; width: 300px; height: 100vh; background: #f8f9fa; padding: 10px; overflow-y: auto; z-index: 1000;">
+        <h4>Blocks</h4>
+    </div>
+
+    <script src="https://unpkg.com/grapesjs"></script>
+    <script src="https://unpkg.com/grapesjs-preset-webpage"></script>
+    
+    <script>
+        console.log('Loading GrapesJS test...');
+        console.log('grapesjs:', typeof grapesjs);
+        
+        try {
+            const editor = grapesjs.init({
+                container: '#gjs',
+                height: '100vh',
+                width: 'auto',
+                plugins: ['grapesjs-preset-webpage'],
+                fromElement: true,
+                storageManager: false,
+                blockManager: {
+                    appendTo: '#blocks',
+                },
+                panels: {
+                    defaults: []
+                },
+                deviceManager: {
+                    devices: [
+                        {
+                            name: 'Desktop',
+                            width: '',
+                        },
+                        {
+                            name: 'Mobile',
+                            width: '320px',
+                            widthMedia: '480px',
+                        }
+                    ]
+                }
+            });
+            
+            // Add custom blocks
+            editor.BlockManager.add('text-block', {
+                label: 'Text',
+                content: '<div>Insert your text here</div>',
+                category: 'Basic'
+            });
+            
+            editor.BlockManager.add('image-block', {
+                label: 'Image', 
+                content: '<img src="https://picsum.photos/300/200" alt="Image">',
+                category: 'Basic'
+            });
+            
+            editor.BlockManager.add('button-block', {
+                label: 'Button',
+                content: '<button class="btn btn-primary">Click me</button>',
+                category: 'Basic'
+            });
+            
+            console.log('GrapesJS initialized successfully:', editor);
+        } catch (error) {
+            console.error('Error initializing GrapesJS:', error);
+            document.getElementById('gjs').innerHTML = `
+                <div style="padding: 50px; color: red;">
+                    <h2>Error Loading GrapesJS</h2>
+                    <p>${error.message}</p>
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>

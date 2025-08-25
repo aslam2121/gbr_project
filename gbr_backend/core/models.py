@@ -60,6 +60,24 @@ class PageVisit(models.Model):
     def __str__(self):
         return f"{self.path} at {self.timestamp}"
 
+
+class Page(models.Model):
+    """Model to store GrapesJS built pages"""
+    title = models.CharField(max_length=200)
+    slug = models.SlugField(max_length=200, unique=True)
+    html_content = models.TextField()
+    css_content = models.TextField(blank=True)
+    created_by = models.ForeignKey(Member, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    is_published = models.BooleanField(default=False)
+    
+    def __str__(self):
+        return self.title
+    
+    class Meta:
+        ordering = ['-created_at']
+
 class ChatMessage(models.Model):
     user = models.ForeignKey(Member, on_delete=models.CASCADE)
     company = models.ForeignKey(Company, on_delete=models.CASCADE)

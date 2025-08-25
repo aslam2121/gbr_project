@@ -1,0 +1,256 @@
+<!-- Sortable List Component with Enhanced Error Handling and Fallbacks -->
+<div class="sortable-container" data-container-type="{{ container_type }}" data-container-id="{{ container_id }}">
+    <!-- Loading State -->
+    <div class="container-loading-indicator" style="display: none;">
+        <div class="d-flex align-items-center justify-content-center p-3">
+            <div class="spinner-border spinner-border-sm me-2" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <small class="text-muted">Updating order...</small>
+        </div>
+    </div>
+    
+    <!-- Error State -->
+    <div class="drag-drop-error" style="display: none;" role="alert">
+        <i class="fas fa-exclamation-triangle error-icon" aria-hidden="true"></i>
+        <span class="error-message">An error occurred while reordering items.</span>
+        <button class="btn btn-sm retry-button" onclick="retryOperation()">
+            <i class="fas fa-redo-alt me-1" aria-hidden="true"></i>Retry
+        </button>
+    </div>
+    
+    <!-- No JavaScript Fallback Controls -->
+    <div class="fallback-controls">
+        <h6 class="mb-3">
+            <i class="fas fa-sort me-2" aria-hidden="true"></i>
+            Reorder Items (JavaScript Required)
+        </h6>
+        <p class="text-muted mb-3">
+            To reorder items by dragging and dropping, please enable JavaScript in your browser. 
+            Alternatively, you can use the form controls below:
+        </p>
+        
+        {% if items %}
+            <form method="post" action="{% url 'update_order_fallback' %}" class="fallback-form">
+                {% csrf_token %}
+                <input type="hidden" name="container_type" value="{{ container_type }}">
+                <input type="hidden" name="container_id" value="{{ container_id }}">
+                
+                <div class="row g-2">
+                    {% for item in items %}
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card">
+                            <div class="card-body p-2">
+                                <div class="d-flex align-items-center">
+                                    <input type="number" 
+                                           name="position_{{ item.id }}" 
+                                           value="{{ item.sort_order|default:forloop.counter }}"
+                                           class="form-control form-control-sm me-2" 
+                                           style="width: 70px;"
+                                           min="1" 
+                                           max="{{ items|length }}"
+                                           aria-label="Position for {{ item.name }}">
+                                    <small class="text-truncate">{{ item.name }}</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                
+                <div class="mt-3">
+                    <button type="submit" class="btn btn-primary btn-sm">
+                        <i class="fas fa-save me-1" aria-hidden="true"></i>
+                        Update Order
+                    </button>
+                    <button type="reset" class="btn btn-secondary btn-sm">
+                        <i class="fas fa-undo me-1" aria-hidden="true"></i>
+                        Reset
+                    </button>
+                </div>
+            </form>
+        {% endif %}
+    </div>
+    
+    <!-- Enhanced Sortable List -->
+    <div class="sortable-list" 
+         id="{{ container_id }}" 
+         data-sortable="true"
+         data-container-type="{{ container_type }}"
+         data-sortable-options='{"animation": 150, "ghostClass": "sortable-ghost"}'
+         role="listbox"
+         aria-label="Reorderable list of {{ container_type }}">
+        
+        {% if items %}
+            {% for item in items %}
+            <div class="draggable-item" 
+                 data-id="{{ item.id }}"
+                 tabindex="0"
+                 role="option"
+                 aria-selected="false"
+                 aria-label="{{ item.name }} - Position {{ forloop.counter }} of {{ items|length }}">
+                
+                <!-- Drag Handle -->
+                <div class="drag-handle" 
+                     aria-label="Drag to reorder {{ item.name }}"
+                     title="Drag to reorder">
+                    <i class="fas fa-grip-vertical" aria-hidden="true"></i>
+                </div>
+                
+                <!-- Item Content -->
+                <div class="item-content">
+                    <div class="item-header">
+                        <h6 class="item-title mb-1">{{ item.name }}</h6>
+                        {% if item.description %}
+                        <p class="item-description text-muted mb-0">{{ item.description|truncatewords:15 }}</p>
+                        {% endif %}
+                    </div>
+                    
+                    {% if item.member_count %}
+                    <div class="item-stats">
+                        <span class="badge bg-primary">{{ item.member_count }} members</span>
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <!-- Action Buttons -->
+                <div class="item-actions">
+                    <a href="{{ item.get_absolute_url }}" 
+                       class="btn btn-sm btn-outline-primary"
+                       aria-label="View {{ item.name }}">
+                        <i class="fas fa-eye" aria-hidden="true"></i>
+                        <span class="d-none d-md-inline">View</span>
+                    </a>
+                </div>
+                
+                <!-- Loading Indicator for Individual Items -->
+                <div class="item-loading-indicator" style="display: none;" aria-hidden="true">
+                    <div class="spinner-border spinner-border-sm" role="status">
+                        <span class="visually-hidden">Updating...</span>
+                    </div>
+                </div>
+                
+                <!-- Position Indicator -->
+                <div class="position-indicator" aria-hidden="true">
+                    <span class="position-number">{{ forloop.counter }}</span>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <!-- Empty State -->
+            <div class="empty-state" role="status">
+                <div class="empty-state-icon">
+                    <i class="fas fa-inbox" aria-hidden="true"></i>
+                </div>
+                <h4>No {{ container_type|title }} Found</h4>
+                <p>There are currently no {{ container_type }} to display.</p>
+                {% if user.is_staff %}
+                <a href="{% url 'admin:index' %}" class="btn btn-outline-primary">
+                    <i class="fas fa-plus me-1" aria-hidden="true"></i>
+                    Add {{ container_type|title|slice:":-1" }}
+                </a>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+    
+    <!-- Progress Indicator -->
+    <div class="operation-progress" style="display: none;" aria-hidden="true">
+        <div class="progress" style="height: 3px;">
+            <div class="progress-bar progress-bar-striped progress-bar-animated" 
+                 role="progressbar" 
+                 aria-valuenow="0" 
+                 aria-valuemin="0" 
+                 aria-valuemax="100">
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Keyboard Navigation Help -->
+<div class="keyboard-help" role="tooltip" aria-hidden="true">
+    <strong>Keyboard Navigation:</strong><br>
+    <kbd>Tab</kbd> Select item<br>
+    <kbd>Space</kbd> Pick up/drop<br>
+    <kbd>↑↓</kbd> Move item<br>
+    <kbd>Esc</kbd> Cancel drag
+</div>
+
+<!-- Enhanced JavaScript for Error Handling -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize enhanced drag & drop for this container
+    if (window.gbrDragDrop) {
+        const containerId = '{{ container_id }}';
+        const containerType = '{{ container_type }}';
+        
+        // Initialize with enhanced options
+        window.gbrDragDrop.initSortable(containerId, {
+            containerType: containerType,
+            enableErrorRecovery: true,
+            enableProgressIndicator: true,
+            enableAnalytics: true
+        });
+        
+        // Setup container-specific error handling
+        setupContainerErrorHandling(containerId);
+    }
+});
+
+function setupContainerErrorHandling(containerId) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    
+    // Listen for custom error events
+    container.addEventListener('dragdrop:error', function(event) {
+        showContainerError(containerId, event.detail.message);
+    });
+    
+    container.addEventListener('dragdrop:success', function(event) {
+        hideContainerError(containerId);
+    });
+    
+    container.addEventListener('dragdrop:loading', function(event) {
+        showContainerLoading(containerId, event.detail.show);
+    });
+}
+
+function showContainerError(containerId, message) {
+    const container = document.querySelector(`[data-container-id="${containerId}"]`);
+    if (!container) return;
+    
+    const errorElement = container.querySelector('.drag-drop-error');
+    if (errorElement) {
+        errorElement.querySelector('.error-message').textContent = message;
+        errorElement.style.display = 'block';
+        errorElement.setAttribute('aria-live', 'polite');
+    }
+}
+
+function hideContainerError(containerId) {
+    const container = document.querySelector(`[data-container-id="${containerId}"]`);
+    if (!container) return;
+    
+    const errorElement = container.querySelector('.drag-drop-error');
+    if (errorElement) {
+        errorElement.style.display = 'none';
+    }
+}
+
+function showContainerLoading(containerId, show) {
+    const container = document.querySelector(`[data-container-id="${containerId}"]`);
+    if (!container) return;
+    
+    const loadingElement = container.querySelector('.container-loading-indicator');
+    if (loadingElement) {
+        loadingElement.style.display = show ? 'flex' : 'none';
+    }
+}
+
+function retryOperation() {
+    // Trigger retry for the last failed operation
+    if (window.gbrDragDrop && window.gbrDragDrop.retryLastOperation) {
+        window.gbrDragDrop.retryLastOperation();
+    }
+}
+</script>

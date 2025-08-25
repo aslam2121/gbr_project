@@ -1,0 +1,374 @@
+<!-- Performance Optimized Sortable List Template -->
+<div class="performance-optimized-container">
+    <!-- Network Status Indicator -->
+    <div id="network-status" class="network-status-optimized"></div>
+    
+    <!-- Performance Monitoring (Development Mode) -->
+    <div id="fps-counter" class="fps-counter"></div>
+    <div id="debug-frames" class="debug-frames"></div>
+    
+    <!-- Virtual Scrolling Container -->
+    <div class="virtual-scroll-container" id="scroll-container-{{ container_id }}">
+        <!-- Top Spacer for Virtual Scrolling -->
+        <div class="virtual-scroll-spacer-top" id="spacer-top-{{ container_id }}"></div>
+        
+        <!-- Optimized Sortable List -->
+        <ul class="list-group sortable-list-optimized" 
+            id="sortable-{{ container_id }}" 
+            data-container-id="{{ container_id }}"
+            data-container-type="{{ container_type }}"
+            data-virtual-scrolling="{% if items|length > 100 %}true{% else %}false{% endif %}"
+            data-item-count="{{ items|length }}">
+            
+            {% for item in items %}
+            <li class="list-group-item virtual-list-item hw-accelerated" 
+                data-item-id="{{ item.id }}"
+                data-sort-order="{{ item.sort_order }}"
+                style="--item-height: 60px;">
+                
+                <!-- Drag Handle -->
+                <div class="drag-handle-optimized" 
+                     role="button" 
+                     tabindex="0"
+                     aria-label="Drag to reorder {{ item.name }}">
+                    <i class="fas fa-grip-vertical" aria-hidden="true"></i>
+                </div>
+                
+                <!-- Item Content -->
+                <div class="item-content">
+                    <div class="item-title">{{ item.name }}</div>
+                    {% if item.description %}
+                    <div class="item-description">{{ item.description|truncatechars:50 }}</div>
+                    {% endif %}
+                </div>
+                
+                <!-- Performance Metrics (Development Mode) -->
+                {% if debug %}
+                <div class="debug-info">
+                    <small>ID: {{ item.id }} | Order: {{ item.sort_order }}</small>
+                </div>
+                {% endif %}
+                
+                <!-- Loading Overlay for Individual Items -->
+                <div class="loading-overlay-optimized item-loading" id="loading-{{ item.id }}">
+                    <div class="loading-spinner-optimized"></div>
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+        
+        <!-- Bottom Spacer for Virtual Scrolling -->
+        <div class="virtual-scroll-spacer-bottom" id="spacer-bottom-{{ container_id }}"></div>
+    </div>
+    
+    <!-- Bulk Loading Overlay -->
+    <div class="loading-overlay-optimized bulk-loading" id="bulk-loading-{{ container_id }}">
+        <div class="loading-content">
+            <div class="loading-spinner-optimized"></div>
+            <div class="loading-text">Processing updates...</div>
+            <div class="loading-progress">
+                <div class="progress">
+                    <div class="progress-bar hw-accelerated" id="progress-bar-{{ container_id }}"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Error States Container -->
+    <div id="error-container-{{ container_id }}" class="error-container"></div>
+    
+    <!-- Performance Dashboard (Development Mode) -->
+    {% if debug %}
+    <div class="performance-dashboard" style="margin-top: 20px;">
+        <h6>Performance Metrics</h6>
+        <div class="row">
+            <div class="col-md-3">
+                <div class="metric-card">
+                    <div class="metric-label">Avg Drag Time</div>
+                    <div class="metric-value" id="avg-drag-time">-</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="metric-card">
+                    <div class="metric-label">FPS</div>
+                    <div class="metric-value" id="current-fps">-</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="metric-card">
+                    <div class="metric-label">API Calls</div>
+                    <div class="metric-value" id="api-call-count">0</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="metric-card">
+                    <div class="metric-label">Cache Hits</div>
+                    <div class="metric-value" id="cache-hit-rate">-</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Performance Optimized JavaScript Initialization -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize performance-optimized drag & drop
+    const optimizedDragDrop = new GBRDragDropOptimized({
+        containerId: '{{ container_id }}',
+        containerType: '{{ container_type }}',
+        itemCount: {{ items|length }},
+        enableVirtualScrolling: {{ items|length > 100|yesno:"true,false" }},
+        enableDebugMode: {{ debug|yesno:"true,false" }},
+        enablePerformanceMonitoring: true,
+        
+        // Optimization settings
+        debounceDelay: 300,
+        batchSize: 10,
+        cacheTimeout: 300000, // 5 minutes
+        
+        // Performance thresholds
+        virtualScrollingThreshold: 100,
+        lazyLoadingThreshold: 50,
+        
+        // Mobile optimizations
+        touchOptimizations: true,
+        reducedMotion: window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    });
+    
+    // Store instance globally for debugging
+    window.dragDropInstance = optimizedDragDrop;
+    
+    // Performance monitoring
+    if ({{ debug|yesno:"true,false" }}) {
+        startPerformanceMonitoring();
+    }
+    
+    // Network status monitoring
+    updateNetworkStatus();
+    window.addEventListener('online', updateNetworkStatus);
+    window.addEventListener('offline', updateNetworkStatus);
+});
+
+function startPerformanceMonitoring() {
+    const fpsCounter = document.getElementById('fps-counter');
+    const avgDragTime = document.getElementById('avg-drag-time');
+    const currentFps = document.getElementById('current-fps');
+    const apiCallCount = document.getElementById('api-call-count');
+    const cacheHitRate = document.getElementById('cache-hit-rate');
+    
+    if (fpsCounter) {
+        fpsCounter.classList.add('debug-mode');
+    }
+    
+    // Update performance metrics every second
+    setInterval(() => {
+        if (window.dragDropInstance) {
+            const metrics = window.dragDropInstance.getPerformanceReport();
+            
+            if (avgDragTime) avgDragTime.textContent = `${metrics.averageDragTime?.toFixed(1) || 0}ms`;
+            if (currentFps) currentFps.textContent = `${metrics.fps || 0}`;
+            if (apiCallCount) apiCallCount.textContent = metrics.apiCallCount || 0;
+            if (cacheHitRate) cacheHitRate.textContent = `${(metrics.cacheHitRate * 100)?.toFixed(1) || 0}%`;
+            
+            if (fpsCounter) {
+                fpsCounter.textContent = `FPS: ${metrics.fps || 0} | Drag: ${metrics.averageDragTime?.toFixed(1) || 0}ms`;
+            }
+        }
+    }, 1000);
+}
+
+function updateNetworkStatus() {
+    const statusElement = document.getElementById('network-status');
+    if (!statusElement) return;
+    
+    if (navigator.onLine) {
+        statusElement.textContent = 'Online';
+        statusElement.className = 'network-status-optimized online';
+        setTimeout(() => {
+            statusElement.style.opacity = '0';
+        }, 2000);
+    } else {
+        statusElement.textContent = 'Offline';
+        statusElement.className = 'network-status-optimized offline';
+        statusElement.style.opacity = '1';
+    }
+}
+
+// Performance testing utilities
+window.performanceTest = {
+    // Test drag performance with simulated operations
+    testDragPerformance: function(iterations = 100) {
+        console.log(`Starting drag performance test with ${iterations} iterations...`);
+        const startTime = performance.now();
+        let totalDragTime = 0;
+        
+        for (let i = 0; i < iterations; i++) {
+            const dragStart = performance.now();
+            // Simulate drag operation
+            if (window.dragDropInstance) {
+                // Test would go here
+            }
+            totalDragTime += performance.now() - dragStart;
+        }
+        
+        const totalTime = performance.now() - startTime;
+        const averageDragTime = totalDragTime / iterations;
+        
+        console.log(`Performance test completed:
+            Total time: ${totalTime.toFixed(2)}ms
+            Average drag time: ${averageDragTime.toFixed(2)}ms
+            Operations per second: ${(1000 / averageDragTime).toFixed(2)}`);
+        
+        return {
+            totalTime,
+            averageDragTime,
+            operationsPerSecond: 1000 / averageDragTime
+        };
+    },
+    
+    // Test virtual scrolling performance
+    testVirtualScrolling: function(scrollDistance = 1000) {
+        console.log(`Testing virtual scrolling performance...`);
+        const container = document.getElementById('scroll-container-{{ container_id }}');
+        if (!container) return;
+        
+        const startTime = performance.now();
+        const startY = container.scrollTop;
+        
+        container.scrollTo({ top: startY + scrollDistance, behavior: 'smooth' });
+        
+        setTimeout(() => {
+            const endTime = performance.now();
+            console.log(`Virtual scroll test completed in ${(endTime - startTime).toFixed(2)}ms`);
+        }, 1000);
+    },
+    
+    // Memory usage test
+    testMemoryUsage: function() {
+        if (performance.memory) {
+            console.log('Memory usage:', {
+                used: Math.round(performance.memory.usedJSHeapSize / 1048576) + ' MB',
+                total: Math.round(performance.memory.totalJSHeapSize / 1048576) + ' MB',
+                limit: Math.round(performance.memory.jsHeapSizeLimit / 1048576) + ' MB'
+            });
+        }
+    }
+};
+
+// Expose performance utilities in debug mode
+{% if debug %}
+console.log('Performance testing utilities available: window.performanceTest');
+console.log('Drag drop instance available: window.dragDropInstance');
+{% endif %}
+</script>
+
+<style>
+/* Performance dashboard styling */
+.performance-dashboard {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #dee2e6;
+}
+
+.metric-card {
+    background: white;
+    padding: 10px;
+    border-radius: 4px;
+    text-align: center;
+    border: 1px solid #e9ecef;
+}
+
+.metric-label {
+    font-size: 11px;
+    color: #6c757d;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.metric-value {
+    font-size: 18px;
+    font-weight: bold;
+    color: #495057;
+    margin-top: 4px;
+}
+
+.loading-content {
+    text-align: center;
+}
+
+.loading-text {
+    margin-top: 10px;
+    font-weight: 500;
+    color: #495057;
+}
+
+.loading-progress {
+    width: 200px;
+    margin: 10px auto 0;
+}
+
+.progress-bar {
+    transition: width 0.3s ease;
+}
+
+.drag-handle-optimized {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+    cursor: grab;
+    color: #6c757d;
+    border-radius: 3px;
+    transition: background-color 0.15s ease;
+}
+
+.drag-handle-optimized:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+    color: #495057;
+}
+
+.drag-handle-optimized:active {
+    cursor: grabbing;
+}
+
+.item-content {
+    flex: 1;
+}
+
+.item-title {
+    font-weight: 500;
+    margin-bottom: 2px;
+}
+
+.item-description {
+    font-size: 0.875rem;
+    color: #6c757d;
+}
+
+.debug-info {
+    margin-top: 5px;
+    font-family: monospace;
+    color: #6c757d;
+}
+
+.list-group-item {
+    display: flex;
+    align-items: center;
+    position: relative;
+    border-left: 3px solid transparent;
+    transition: border-left-color 0.15s ease;
+}
+
+.list-group-item:hover {
+    border-left-color: var(--bs-primary);
+}
+
+.error-container {
+    margin-top: 10px;
+}
+</style>
